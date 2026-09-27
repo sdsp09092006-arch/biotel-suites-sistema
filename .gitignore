@@ -1,0 +1,42 @@
+# ============================================
+# Archivos que NO se suben a GitHub
+# ============================================
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editores de código
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Dependencias (si después usan npm/composer)
+node_modules/
+vendor/
+
+# Archivos de configuración local
+.env
+.env.local
+config.local.php
+
+# Logs
+*.log
+logs/
+
+# Archivos temporales
+*.tmp
+*.bak
+*.swp
+*~
+
+# Carpetas de XAMPP
+xampp/
+htdocs_backup/
+
+# Archivos comprimidos (backups)
+*.zip
+*.rar
+*.tar.gz

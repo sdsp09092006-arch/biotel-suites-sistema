@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Cuenta — Biotel Suites</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <main class="auth-wrapper">
+        <div class="auth-card" style="max-width: 520px;">
+
+            <!-- ============================================ -->
+            <!-- HEADER -->
+            <!-- ============================================ -->
+            <header class="auth-header">
+                <div class="auth-logo">BS</div>
+                <h1 class="auth-title">Crear cuenta pública</h1>
+                <p class="auth-subtitle">Regístrese para reservar y gestionar su estadía</p>
+
+                <!-- Badge de rol por defecto -->
+                <div style="margin-top: 1rem;">
+                    <span class="badge badge-primary" style="padding: 0.4rem 1rem; font-size: 0.8rem;">
+                        ★ Rol asignado: Cliente / Huésped
+                    </span>
+                </div>
+            </header>
+
+            <!-- ============================================ -->
+            <!-- FORMULARIO REGISTRO -->
+            <!-- ============================================ -->
+            <form id="registerForm" novalidate>
+
+                <!-- Nombre completo -->
+                <div class="form-group">
+                    <label class="form-label" for="fullname">
+                        Nombre completo <span class="required">*</span>
+                    </label>
+                    <div class="input-group">
+                        <span class="input-icon">👤</span>
+                        <input
+                            type="text"
+                            id="fullname"
+                            name="fullname"
+                            class="form-control"
+                            placeholder="Ej: Juan Pérez Rodríguez"
+                            autocomplete="name"
+                            required
+                        >
+                    </div>
+                    <span class="form-error" id="errorFullname"></span>
+                </div>
+
+                <!-- Cédula / RIF -->
+                <div class="form-group">
+                    <label class="form-label" for="document">
+                        Cédula o RIF <span class="required">*</span>
+                    </label>
+                    <div class="input-group">
+                        <span class="input-icon">🆔</span>
+                        <input
+                            type="text"
+                            id="document"
+                            name="document"
+                            class="form-control"
+                            placeholder="Ej: V-12345678"
+                            required
+                        >
+                    </div>
+                    <span class="form-hint">Formato: V-12345678, E-12345678 o J-123456789</span>
+                    <span class="form-error" id="errorDocument"></span>
+                </div>
+
+                <!-- Correo electrónico -->
+                <div class="form-group">
+                    <label class="form-label" for="regEmail">
+                        Correo electrónico <span class="required">*</span>
+                    </label>
+                    <div class="input-group">
+                        <span class="input-icon">📧</span>
+                        <input
+                            type="email"
+                            id="regEmail"
+                            name="regEmail"
+                            class="form-control"
+                            placeholder="correo@ejemplo.com"
+                            autocomplete="email"
+                            required
+                        >
+                    </div>
+                    <span class="form-error" id="errorEmail"></span>
+                </div>
+
+                <!-- Teléfono -->
+                <div class="form-group">
+                    <label class="form-label" for="phone">
+                        Teléfono de contacto
+                    </label>
+                    <div class="input-group">
+                        <span class="input-icon">📱</span>
+                        <input
+                            type="tel"
+                            id="phone"
+                            name="phone"
+                            class="form-control"
+                            placeholder="0412-1234567"
+                            autocomplete="tel"
+                        >
+                    </div>
+                </div>
+
+                <!-- Contraseña -->
+                <div class="form-group">
+                    <label class="form-label" for="regPassword">
+                        Contraseña <span class="required">*</span>
+                    </label>
+                    <div class="input-group">
+                        <span class="input-icon">🔒</span>
+                        <input
+                            type="password"
+                            id="regPassword"
+                            name="regPassword"
+                            class="form-control"
+                            placeholder="Mínimo 8 caracteres"
+                            autocomplete="new-password"
+                            required
+                        >
+                        <button
+                            type="button"
+                            onclick="togglePass('regPassword', this)"
+                            style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 1.1rem; color: var(--gray-400); padding: 0;"
+                            title="Mostrar/ocultar"
+                        >👁</button>
+                    </div>
+                    <span class="form-error" id="errorPassword"></span>
+                </div>
+
+                <!-- Confirmar contraseña -->
+                <div class="form-group">
+                    <label class="form-label" for="regConfirm">
+                        Confirmar contraseña <span class="required">*</span>
+                    </label>
+                    <div class="input-group">
+                        <span class="input-icon">🔒</span>
+                        <input
+                            type="password"
+                            id="regConfirm"
+                            name="regConfirm"
+                            class="form-control"
+                            placeholder="Repita la contraseña"
+                            autocomplete="new-password"
+                            required
+                        >
+                        <button
+                            type="button"
+                            onclick="togglePass('regConfirm', this)"
+                            style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 1.1rem; color: var(--gray-400); padding: 0;"
+                            title="Mostrar/ocultar"
+                        >👁</button>
+                    </div>
+                    <span class="form-error" id="errorConfirm"></span>
+                </div>
+
+                <!-- Términos y condiciones -->
+                <div class="form-check" style="margin-bottom: 1.5rem;">
+                    <input type="checkbox" id="terms" name="terms" required>
+                    <label for="terms">
+                        Acepto los <a href="#">términos y condiciones</a> y la
+                        <a href="#">política de privacidad</a> de Biotel Suites.
+                    </label>
+                </div>
+                <span class="form-error" id="errorTerms" style="display: block; margin-top: -1rem; margin-bottom: 1rem;"></span>
+
+                <!-- Botón Registrarse -->
+                <button type="submit" class="btn btn-primary btn-lg btn-block">
+                    Crear mi cuenta
+                </button>
+
+            </form>
+
+            <!-- ============================================ -->
+            <!-- FOOTER -->
+            <!-- ============================================ -->
+            <footer class="auth-footer">
+                <p>¿Ya tienes cuenta?
+                    <a href="login.html">Inicia sesión aquí</a>
+                </p>
+                <p style="margin-top: 0.5rem; font-size: 0.8rem;">
+                    <a href="sistema_diseno.html" style="color: var(--gray-500);">
+                        Ver sistema de diseño →
+                    </a>
+                </p>
+            </footer>
+
+        </div>
+    </main>
+
+    <!-- Contenedor de Toasts -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // ============================================
+        // MOSTRAR / OCULTAR CONTRASEÑA
+        // ============================================
+        function togglePass(id, btn) {
+            var input = document.getElementById(id);
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.textContent = '🙈';
+            } else {
+                input.type = 'password';
+                btn.textContent = '👁';
+            }
+        }
+
+        // ============================================
+        // VALIDACIÓN DEL FORMULARIO
+        // ============================================
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            var fullname = document.getElementById('fullname');
+            var documentInput = document.getElementById('document');
+            var email = document.getElementById('regEmail');
+            var password = document.getElementById('regPassword');
+            var confirm = document.getElementById('regConfirm');
+            var terms = document.getElementById('terms');
+
+            // Limpiar errores
+            document.querySelectorAll('.form-control').forEach(function(el) {
+                el.classList.remove('error');
+            });
+            document.querySelectorAll('.form-error').forEach(function(el) {
+                el.textContent = '';
+            });
+
+            var valido = true;
+
+            // Validar nombre
+            if (!fullname.value.trim()) {
+                marcarError(fullname, 'errorFullname', 'El nombre completo es obligatorio.');
+                valido = false;
+            } else if (fullname.value.trim().length < 3) {
+                marcarError(fullname, 'errorFullname', 'Nombre demasiado corto.');
+                valido = false;
+            }
+
+            // Validar cédula/RIF
+            var docRegex = /^[VEJvej]-?\d{6,10}$/;
+            if (!documentInput.value.trim()) {
+                marcarError(documentInput, 'errorDocument', 'La cédula o RIF es obligatorio.');
+                valido = false;
+            } else if (!docRegex.test(documentInput.value.trim())) {
+                marcarError(documentInput, 'errorDocument', 'Formato inválido. Use: V-12345678');
+                valido = false;
+            }
+
+            // Validar email
+            var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!email.value.trim()) {
+                marcarError(email, 'errorEmail', 'El correo es obligatorio.');
+                valido = false;
+            } else if (!emailRegex.test(email.value.trim())) {
+                marcarError(email, 'errorEmail', 'Formato de correo inválido.');
+                valido = false;
+            }
+
+            // Validar contraseña
+            if (!password.value) {
+                marcarError(password, 'errorPassword', 'La contraseña es obligatoria.');
+                valido = false;
+            } else if (password.value.length < 8) {
+                marcarError(password, 'errorPassword', 'Mínimo 8 caracteres.');
+                valido = false;
+            }
+
+            // Validar confirmación
+            if (password.value !== confirm.value) {
+                marcarError(confirm, 'errorConfirm', 'Las contraseñas no coinciden.');
+                valido = false;
+            }
+
+            // Validar términos
+            if (!terms.checked) {
+                document.getElementById('errorTerms').textContent = '⚠ Debe aceptar los términos y condiciones.';
+                valido = false;
+            }
+
+            if (!valido) {
+                showToast('danger', 'Error en el registro', 'Verifique los campos marcados en rojo.');
+                return;
+            }
+
+            // Éxito
+            showToast('success', '¡Registro Exitoso!', 'Su cuenta fue creada. Redirigiendo al login...');
+
+            setTimeout(function() {
+                window.location.href = 'login.html';
+            }, 2000);
+        });
+
+        // ============================================
+        // UTILIDAD: MARCAR ERROR
+        // ============================================
+        function marcarError(input, errorId, mensaje) {
+            input.classList.add('error');
+            document.getElementById(errorId).textContent = '⚠ ' + mensaje;
+        }
+
+        // ============================================
+        // LIMPIAR ERRORES AL ESCRIBIR
+        // ============================================
+        document.querySelectorAll('.form-control').forEach(function(input) {
+            input.addEventListener('input', function() {
+                this.classList.remove('error');
+                var errorId = 'error' + this.id.charAt(0).toUpperCase() + this.id.slice(1).replace('reg', '');
+                var errorEl = document.getElementById(errorId);
+                if (errorEl) errorEl.textContent = '';
+            });
+        });
+
+        // ============================================
+        // TOASTS
+        // ============================================
+        function showToast(type, title, message) {
+            var container = document.getElementById('toastContainer');
+            var seconds = 5;
+
+            var icons = {
+                success: '✓',
+                danger: '✕',
+                warning: '⚠',
+                info: 'ℹ'
+            };
+
+            var toast = document.createElement('div');
+            toast.className = 'toast toast-' + type;
+            toast.innerHTML = 
+                '<span class="toast-icon">' + icons[type] + '</span>' +
+                '<div class="toast-content">' +
+                    '<div class="toast-title">' + title + '</div>' +
+                    '<p class="toast-message">' + message + '</p>' +
+                '</div>' +
+                '<button class="toast-close" onclick="this.parentElement.remove()">×</button>' +
+                '<span class="toast-timer">' + seconds + 's</span>';
+
+            container.appendChild(toast);
+
+            var timerEl = toast.querySelector('.toast-timer');
+            var interval = setInterval(function() {
+                seconds--;
+                timerEl.textContent = seconds + 's';
+                if (seconds <= 0) {
+                    clearInterval(interval);
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateX(120%)';
+                    setTimeout(function() { toast.remove(); }, 300);
+                }
+            }, 1000);
+        }
+    </script>
+
+</body>
+</html>

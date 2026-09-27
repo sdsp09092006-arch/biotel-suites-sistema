@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — Biotel Suites</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="dashboard-layout">
+
+        <!-- ============================================ -->
+        <!-- SIDEBAR -->
+        <!-- ============================================ -->
+        <aside class="sidebar" id="sidebar">
+            <a href="dashboard.html" class="sidebar-brand">
+                <span class="sidebar-logo">BS</span>
+                <span>Biotel Suites</span>
+            </a>
+
+            <nav class="sidebar-nav">
+                <div class="nav-label">Principal</div>
+
+                <a href="dashboard.html" class="nav-link active">
+                    <span>📊</span> <span>Dashboard</span>
+                </a>
+
+                <a href="crud.html" class="nav-link">
+                    <span>🧾</span> <span>Reservaciones</span>
+                </a>
+
+                <a href="crud.html" class="nav-link">
+                    <span>🛏️</span> <span>Habitaciones</span>
+                </a>
+
+                <a href="crud.html" class="nav-link">
+                    <span>👥</span> <span>Huéspedes</span>
+                </a>
+
+                <div class="nav-label">Gestión</div>
+
+                <a href="#" class="nav-link">
+                    <span>🔑</span> <span>Check-in / Check-out</span>
+                </a>
+
+                <a href="#" class="nav-link">
+                    <span>🧹</span> <span>Ama de Llaves</span>
+                </a>
+
+                <a href="#" class="nav-link">
+                    <span>💰</span> <span>Facturación</span>
+                </a>
+
+                <div class="nav-label">Sistema</div>
+
+                <a href="sistema_diseno.html" class="nav-link">
+                    <span>🎨</span> <span>Sistema de Diseño</span>
+                </a>
+
+                <a href="login.html" class="nav-link">
+                    <span>🚪</span> <span>Cerrar Sesión</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-avatar">AC</div>
+                <div>
+                    <div style="font-weight: 600; color: white;">Ana Castillo</div>
+                    <div style="font-size: 0.75rem;">Recepcionista</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Overlay para cerrar sidebar en mobile -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- ============================================ -->
+        <!-- MAIN CONTENT -->
+        <!-- ============================================ -->
+        <div class="main-content">
+
+            <!-- TOPBAR -->
+            <header class="topbar">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <button class="hamburger" id="hamburger" aria-label="Menú">
+                        ☰
+                    </button>
+                    <h1 class="topbar-title">Panel de Recepción</h1>
+                </div>
+
+                <div class="topbar-user">
+                    <div class="topbar-user-info">
+                        <div class="topbar-user-name">Ana Castillo</div>
+                        <div class="topbar-user-role">Recepcionista</div>
+                    </div>
+                    <div class="sidebar-avatar" style="width: 42px; height: 42px; font-size: 0.9rem;">AC</div>
+                </div>
+            </header>
+
+            <!-- CONTENIDO -->
+            <main class="content">
+
+                <!-- Page header -->
+                <div class="page-header">
+                    <div>
+                        <h1>Buenos días, Ana 👋</h1>
+                        <p>Aquí está el resumen del hotel hoy · <span id="fechaHoy"></span></p>
+                    </div>
+                    <button class="btn btn-primary" onclick="window.location.href='crud.html'">
+                        <span>＋</span> Nueva Reservación
+                    </button>
+                </div>
+
+                <!-- KPIs -->
+                <section class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-label">Ocupación Hoy</div>
+                        <div class="kpi-value">78%</div>
+                        <div class="kpi-icon">🛏️</div>
+                        <p class="text-muted" style="font-size: 0.8rem; margin-top: 0.75rem;">
+                            119 / 153 habitaciones
+                        </p>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-label">Check-ins Pendientes</div>
+                        <div class="kpi-value">12</div>
+                        <div class="kpi-icon">🔑</div>
+                        <p class="text-muted" style="font-size: 0.8rem; margin-top: 0.75rem;">
+                            Próximo: 14:30 hrs
+                        </p>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-label">Check-outs de Hoy</div>
+                        <div class="kpi-value">8</div>
+                        <div class="kpi-icon">🧳</div>
+                        <p class="text-muted" style="font-size: 0.8rem; margin-top: 0.75rem;">
+                            Último: 12:00 hrs
+                        </p>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-label">Ingresos del Día</div>
+                        <div class="kpi-value">$4,820</div>
+                        <div class="kpi-icon">💰</div>
+                        <p class="text-muted" style="font-size: 0.8rem; margin-top: 0.75rem;">
+                            +12% vs ayer
+                        </p>
+                    </div>
+                </section>
+
+                <!-- Accesos rápidos -->
+                <section style="margin-top: 2rem;">
+                    <h2 style="font-size: 1.15rem; margin-bottom: 1rem;">Accesos Rápidos</h2>
+
+                    <div class="cards-grid">
+                        <a href="crud.html" class="card" style="text-decoration: none; padding: 1.5rem; display: block; transition: var(--transition);">
+                            <div style="font-size: 2rem; margin-bottom: 0.75rem;">🧾</div>
+                            <h3 style="font-size: 1.1rem; margin-bottom: 0.25rem; color: var(--gray-900);">Gestionar Reservaciones</h3>
+                            <p style="font-size: 0.85rem; color: var(--gray-500); margin: 0;">
+                                Ver, crear y editar reservas activas
+                            </p>
+                        </a>
+
+                        <a href="crud.html" class="card" style="text-decoration: none; padding: 1.5rem; display: block; transition: var(--transition);">
+                            <div style="font-size: 2rem; margin-bottom: 0.75rem;">🛏️</div>
+                            <h3 style="font-size: 1.1rem; margin-bottom: 0.25rem; color: var(--gray-900);">Estado de Habitaciones</h3>
+                            <p style="font-size: 0.85rem; color: var(--gray-500); margin: 0;">
+                                Disponibilidad en tiempo real
+                            </p>
+                        </a>
+
+                        <a href="crud.html" class="card" style="text-decoration: none; padding: 1.5rem; display: block; transition: var(--transition);">
+                            <div style="font-size: 2rem; margin-bottom: 0.75rem;">👥</div>
+                            <h3 style="font-size: 1.1rem; margin-bottom: 0.25rem; color: var(--gray-900);">Registro de Huéspedes</h3>
+                            <p style="font-size: 0.85rem; color: var(--gray-500); margin: 0;">
+                                Base de datos de clientes
+                            </p>
+                        </a>
+
+                        <a href="crud.html" class="card" style="text-decoration: none; padding: 1.5rem; display: block; transition: var(--transition);">
+                            <div style="font-size: 2rem; margin-bottom: 0.75rem;">💰</div>
+                            <h3 style="font-size: 1.1rem; margin-bottom: 0.25rem; color: var(--gray-900);">Facturación y Consumos</h3>
+                            <p style="font-size: 0.85rem; color: var(--gray-500); margin: 0;">
+                                Cargos y cierre de cuentas
+                            </p>
+                        </a>
+                    </div>
+                </section>
+
+                <!-- Tabla de reservas del día -->
+                <section style="margin-top: 2rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+                        <h2 style="font-size: 1.15rem; margin: 0;">Reservaciones del Día</h2>
+                        <a href="crud.html" class="btn btn-outline btn-sm">Ver todas</a>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Huésped</th>
+                                    <th>Habitación</th>
+                                    <th>Check-in</th>
+                                    <th>Check-out</th>
+                                    <th>Estado</th>
+                                    <th style="text-align: right;">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>María Delgado</strong></td>
+                                    <td>101 - Suite Deluxe</td>
+                                    <td>Hoy 14:30</td>
+                                    <td>28/09/2026</td>
+                                    <td><span class="badge badge-success">✓ Confirmada</span></td>
+                                    <td style="text-align: right;">
+                                        <button class="btn btn-icon" title="Editar">✎</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>José Marcano</strong></td>
+                                    <td>205 - Ejecutiva</td>
+                                    <td>Hoy 16:00</td>
+                                    <td>30/09/2026</td>
+                                    <td><span class="badge badge-warning">⏳ Pendiente</span></td>
+                                    <td style="text-align: right;">
+                                        <button class="btn btn-icon" title="Editar">✎</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Laura Rivas</strong></td>
+                                    <td>312 - Doble Estándar</td>
+                                    <td>Hoy 18:15</td>
+                                    <td>29/09/2026</td>
+                                    <td><span class="badge badge-success">✓ Confirmada</span></td>
+                                    <td style="text-align: right;">
+                                        <button class="btn btn-icon" title="Editar">✎</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Carlos Bravo</strong></td>
+                                    <td>108 - Suite Deluxe</td>
+                                    <td>Hoy 20:00</td>
+                                    <td>01/10/2026</td>
+                                    <td><span class="badge badge-info">ℹ Por verificar</span></td>
+                                    <td style="text-align: right;">
+                                        <button class="btn btn-icon" title="Editar">✎</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- Contenedor de Toasts -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // ============================================
+        // MOSTRAR FECHA ACTUAL
+        // ============================================
+        var fecha = new Date();
+        var dias = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+        var meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+        var fechaTexto = dias[fecha.getDay()] + ', ' + fecha.getDate() + ' de ' + meses[fecha.getMonth()] + ' de ' + fecha.getFullYear();
+        document.getElementById('fechaHoy').textContent = fechaTexto;
+
+        // ============================================
+        // TOGGLE SIDEBAR EN MÓVIL
+        // ============================================
+        var sidebar = document.getElementById('sidebar');
+        var overlay = document.getElementById('sidebarOverlay');
+        var hamburger = document.getElementById('hamburger');
+
+        hamburger.addEventListener('click', function() {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        });
+
+        overlay.addEventListener('click', function() {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('active');
+        });
+
+        // ============================================
+        // TOASTS
+        // ============================================
+        function showToast(type, title, message) {
+            var container = document.getElementById('toastContainer');
+            var seconds = 5;
+
+            var icons = {
+                success: '✓',
+                danger: '✕',
+                warning: '⚠',
+                info: 'ℹ'
+            };
+
+            var toast = document.createElement('div');
+            toast.className = 'toast toast-' + type;
+            toast.innerHTML = 
+                '<span class="toast-icon">' + icons[type] + '</span>' +
+                '<div class="toast-content">' +
+                    '<div class="toast-title">' + title + '</div>' +
+                    '<p class="toast-message">' + message + '</p>' +
+                '</div>' +
+                '<button class="toast-close" onclick="this.parentElement.remove()">×</button>' +
+                '<span class="toast-timer">' + seconds + 's</span>';
+
+            container.appendChild(toast);
+
+            var timerEl = toast.querySelector('.toast-timer');
+            var interval = setInterval(function() {
+                seconds--;
+                timerEl.textContent = seconds + 's';
+                if (seconds <= 0) {
+                    clearInterval(interval);
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateX(120%)';
+                    setTimeout(function() { toast.remove(); }, 300);
+                }
+            }, 1000);
+        }
+
+        // Mostrar toast de bienvenida
+        setTimeout(function() {
+            showToast('info', 'Sesión iniciada', 'Bienvenida Ana, tiene 12 check-ins pendientes hoy.');
+        }, 800);
+    </script>
+
+</body>
+</html>

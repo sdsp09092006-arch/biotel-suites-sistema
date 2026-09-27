@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión — Biotel Suites</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <main class="auth-wrapper">
+        <div class="auth-card">
+
+            <!-- ============================================ -->
+            <!-- HEADER -->
+            <!-- ============================================ -->
+            <header class="auth-header">
+                <div class="auth-logo">BS</div>
+                <h1 class="auth-title">Bienvenido de nuevo</h1>
+                <p class="auth-subtitle">Ingrese sus credenciales para acceder al sistema</p>
+            </header>
+
+            <!-- ============================================ -->
+            <!-- FORMULARIO LOGIN -->
+            <!-- ============================================ -->
+            <form id="loginForm" novalidate>
+
+                <!-- Campo Correo -->
+                <div class="form-group">
+                    <label class="form-label" for="email">
+                        Correo electrónico <span class="required">*</span>
+                    </label>
+                    <div class="input-group">
+                        <span class="input-icon">📧</span>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            class="form-control"
+                            placeholder="recepcion@biotelsuites.com"
+                            autocomplete="email"
+                            required
+                        >
+                    </div>
+                    <span class="form-error" id="errorEmail"></span>
+                </div>
+
+                <!-- Campo Contraseña -->
+                <div class="form-group">
+                    <label class="form-label" for="password">
+                        Contraseña <span class="required">*</span>
+                    </label>
+                    <div class="input-group">
+                        <span class="input-icon">🔒</span>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            class="form-control"
+                            placeholder="••••••••"
+                            autocomplete="current-password"
+                            required
+                        >
+                        <button
+                            type="button"
+                            class="toggle-password"
+                            onclick="togglePassword()"
+                            id="toggleBtn"
+                            style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 1.1rem; color: var(--gray-400); padding: 0;"
+                            title="Mostrar/ocultar contraseña"
+                        >👁</button>
+                    </div>
+                    <span class="form-error" id="errorPassword"></span>
+                </div>
+
+                <!-- Recordar sesión + Olvidé contraseña -->
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem;">
+                    <div class="form-check" style="margin: 0;">
+                        <input type="checkbox" id="remember" name="remember">
+                        <label for="remember">Recordar sesión</label>
+                    </div>
+                    <a href="#" style="font-size: 0.85rem; font-weight: 600;">
+                        ¿Olvidaste tu contraseña?
+                    </a>
+                </div>
+
+                <!-- Botón Ingresar -->
+                <button type="submit" class="btn btn-primary btn-lg btn-block">
+                    Ingresar al sistema
+                </button>
+
+            </form>
+
+            <!-- ============================================ -->
+            <!-- FOOTER -->
+            <!-- ============================================ -->
+            <footer class="auth-footer">
+                <p>¿No tienes una cuenta?
+                    <a href="registro.html">Crear cuenta pública</a>
+                </p>
+                <p style="margin-top: 0.5rem; font-size: 0.8rem;">
+                    <a href="sistema_diseno.html" style="color: var(--gray-500);">
+                        Ver sistema de diseño →
+                    </a>
+                </p>
+            </footer>
+
+        </div>
+    </main>
+
+    <!-- Contenedor de Toasts -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // ============================================
+        // MOSTRAR / OCULTAR CONTRASEÑA
+        // ============================================
+        function togglePassword() {
+            var input = document.getElementById('password');
+            var btn = document.getElementById('toggleBtn');
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.textContent = '🙈';
+            } else {
+                input.type = 'password';
+                btn.textContent = '👁';
+            }
+        }
+
+        // ============================================
+        // VALIDACIÓN Y ENVÍO DEL FORMULARIO
+        // ============================================
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            var email = document.getElementById('email');
+            var password = document.getElementById('password');
+            var errorEmail = document.getElementById('errorEmail');
+            var errorPassword = document.getElementById('errorPassword');
+
+            // Limpiar errores previos
+            email.classList.remove('error');
+            password.classList.remove('error');
+            errorEmail.textContent = '';
+            errorPassword.textContent = '';
+
+            var valido = true;
+
+            // Validar email
+            var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!email.value.trim()) {
+                email.classList.add('error');
+                errorEmail.textContent = '⚠ El correo es obligatorio.';
+                valido = false;
+            } else if (!emailRegex.test(email.value.trim())) {
+                email.classList.add('error');
+                errorEmail.textContent = '⚠ Formato de correo inválido.';
+                valido = false;
+            }
+
+            // Validar contraseña
+            if (!password.value.trim()) {
+                password.classList.add('error');
+                errorPassword.textContent = '⚠ La contraseña es obligatoria.';
+                valido = false;
+            } else if (password.value.length < 6) {
+                password.classList.add('error');
+                errorPassword.textContent = '⚠ Mínimo 6 caracteres.';
+                valido = false;
+            }
+
+            // Si hay errores, mostrar toast
+            if (!valido) {
+                showToast('danger', 'Error al procesar', 'Verifique los campos marcados en rojo.');
+                return;
+            }
+
+            // Simular login exitoso
+            showToast('success', '¡Bienvenido!', 'Iniciando sesión en Biotel Suites...');
+
+            // Redirigir después de 1.5 segundos
+            setTimeout(function() {
+                window.location.href = 'dashboard.html';
+            }, 1500);
+        });
+
+        // ============================================
+        // TOASTS
+        // ============================================
+        function showToast(type, title, message) {
+            var container = document.getElementById('toastContainer');
+            var seconds = 5;
+
+            var icons = {
+                success: '✓',
+                danger: '✕',
+                warning: '⚠',
+                info: 'ℹ'
+            };
+
+            var toast = document.createElement('div');
+            toast.className = 'toast toast-' + type;
+            toast.innerHTML = 
+                '<span class="toast-icon">' + icons[type] + '</span>' +
+                '<div class="toast-content">' +
+                    '<div class="toast-title">' + title + '</div>' +
+                    '<p class="toast-message">' + message + '</p>' +
+                '</div>' +
+                '<button class="toast-close" onclick="this.parentElement.remove()">×</button>' +
+                '<span class="toast-timer">' + seconds + 's</span>';
+
+            container.appendChild(toast);
+
+            var timerEl = toast.querySelector('.toast-timer');
+            var interval = setInterval(function() {
+                seconds--;
+                timerEl.textContent = seconds + 's';
+                if (seconds <= 0) {
+                    clearInterval(interval);
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateX(120%)';
+                    setTimeout(function() { toast.remove(); }, 300);
+                }
+            }, 1000);
+        }
+
+        // ============================================
+        // LIMPIAR ERRORES AL ESCRIBIR
+        // ============================================
+        document.getElementById('email').addEventListener('input', function() {
+            this.classList.remove('error');
+            document.getElementById('errorEmail').textContent = '';
+        });
+
+        document.getElementById('password').addEventListener('input', function() {
+            this.classList.remove('error');
+            document.getElementById('errorPassword').textContent = '';
+        });
+    </script>
+
+</body>
+</html>

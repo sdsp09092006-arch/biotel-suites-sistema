@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Diseño — Biotel Suites</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos específicos del style guide */
+        body {
+            padding: 2rem 1rem;
+        }
+        .style-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 3px solid var(--brand-primary);
+        }
+        .style-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .style-header p {
+            color: var(--gray-500);
+            font-size: 1rem;
+        }
+        .style-section {
+            max-width: 1100px;
+            margin: 0 auto 3rem;
+            background-color: var(--white);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--gray-200);
+            overflow: hidden;
+        }
+        .style-section-title {
+            padding: 1.25rem 1.75rem;
+            background-color: var(--brand-dark);
+            color: var(--white);
+            font-family: var(--font-heading);
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin: 0;
+        }
+        .style-section-title small {
+            color: rgba(255, 255, 255, 0.6);
+            font-family: var(--font-body);
+            font-weight: 400;
+            font-size: 0.85rem;
+            margin-left: 0.5rem;
+        }
+        .style-section-body {
+            padding: 2rem 1.75rem;
+        }
+        .subsection-title {
+            font-family: var(--font-heading);
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--gray-800);
+            margin: 1.75rem 0 1rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 2px solid var(--gray-200);
+        }
+        .subsection-title:first-child {
+            margin-top: 0;
+        }
+        .demo-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Paleta de colores */
+        .palette-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1rem;
+        }
+        .swatch {
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            border: 1px solid var(--gray-200);
+            box-shadow: var(--shadow-sm);
+        }
+        .swatch-color {
+            height: 90px;
+        }
+        .swatch-info {
+            padding: 0.75rem 1rem;
+            background-color: var(--white);
+        }
+        .swatch-name {
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--gray-900);
+            margin-bottom: 0.15rem;
+        }
+        .swatch-hex {
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            color: var(--gray-500);
+        }
+
+        /* Tipografía muestra */
+        .type-sample {
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--gray-100);
+        }
+        .type-sample:last-child {
+            border-bottom: none;
+        }
+        .type-meta {
+            font-size: 0.75rem;
+            color: var(--gray-400);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.4rem;
+        }
+
+        /* Formulario de ejemplo */
+        .form-demo {
+            max-width: 480px;
+        }
+
+        /* Grid de iconos demo */
+        .icons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            gap: 1rem;
+        }
+        .icon-demo {
+            text-align: center;
+            padding: 1rem 0.5rem;
+            border-radius: var(--radius-md);
+            background-color: var(--gray-50);
+            border: 1px solid var(--gray-200);
+        }
+        .icon-demo-char {
+            font-size: 1.75rem;
+            color: var(--brand-primary);
+            display: block;
+            margin-bottom: 0.4rem;
+        }
+        .icon-demo-label {
+            font-size: 0.75rem;
+            color: var(--gray-600);
+        }
+
+        /* Botón demo con label debajo */
+        .btn-with-label {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .btn-with-label small {
+            font-size: 0.7rem;
+            color: var(--gray-500);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================ -->
+    <!-- HEADER -->
+    <!-- ============================================ -->
+    <header class="style-header">
+        <div class="auth-logo" style="margin: 0 auto 1rem;">BS</div>
+        <h1>Estilos a tu medida</h1>
+        <p>Sistema de Diseño Oficial — Biotel Suites</p>
+        <p style="font-size: 0.85rem; margin-top: 0.5rem;">
+            Living Style Guide · ADS-433 · Lapso 2-2026
+        </p>
+    </header>
+
+    <!-- ============================================ -->
+    <!-- 1. PALETA DE COLORES -->
+    <!-- ============================================ -->
+    <section class="style-section">
+        <h2 class="style-section-title">🎨 1. Paleta de Colores <small>Brand Colors</small></h2>
+        <div class="style-section-body">
+            <p class="text-muted mb-3">
+                Escala tonal institucional basada en la gama de rojos, guindas y obsidianas de la marca.
+                Todos los colores están declarados en <code>:root</code> de <code>styles.css</code>.
+            </p>
+
+            <div class="palette-grid">
+                <div class="swatch">
+                    <div class="swatch-color" style="background-color: #0b0a08;"></div>
+                    <div class="swatch-info">
+                        <div class="swatch-name">Obsidian Black</div>
+                        <div class="swatch-hex">#0b0a08</div>
+                    </div>
+                </div>
+                <div class="swatch">
+                    <div class="swatch-color" style="background-color: #be0b11;"></div>
+                    <div class="swatch-info">
+                        <div class="swatch-name">Ruby Crimson</div>
+                        <div class="swatch-hex">#be0b11</div>
+                    </div>
+                </div>
+                <div class="swatch">
+                    <div class="swatch-color" style="background-color: #9b0c0f;"></div>
+                    <div class="swatch-info">
+                        <div class="swatch-name">Deep Crimson</div>
+                        <div class="swatch-hex">#9b0c0f</div>
+                    </div>
+                </div>
+                <div class="swatch">
+                    <div class="swatch-color" style="background-color: #790d0d;"></div>
+                    <div class="swatch-info">
+                        <div class="swatch-name">Dark Wine</div>
+                        <div class="swatch-hex">#790d0d</div>
+                    </div>
+                </div>
+                <div class="swatch">
+                    <div class="swatch-color" style="background-color: #570e0b;"></div>
+                    <div class="swatch-info">
+                        <div class="swatch-name">Deep Maroon</div>
+                        <div class="swatch-hex">#570e0b</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Colores de Estado</h3>
+            <div class="palette-grid">
+                <div class="swatch">
+                    <div class="swatch-color" style="background-color: #16a34a;"></div>
+                    <div class="swatch-info">
+                        <div class="swatch-name">Success</div>
+                        <div class="swatch-hex">#16a34a</div>
+                    </div>
+                </div>
+                <div class="swatch">
+                    <div class="swatch-color" style="background-color: #f59e0b;"></div>
+                    <div class="swatch-info">
+                        <div class="swatch-name">Warning</div>
+                        <div class="swatch-hex">#f59e0b</div>
+                    </div>
+                </div>
+                <div class="swatch">
+                    <div class="swatch-color" style="background-color: #dc2626;"></div>
+                    <div class="swatch-info">
+                        <div class="swatch-name">Danger</div>
+                        <div class="swatch-hex">#dc2626</div>
+                    </div>
+                </div>
+                <div class="swatch">
+                    <div class="swatch-color" style="background-color: #0284c7;"></div>
+                    <div class="swatch-info">
+                        <div class="swatch-name">Info</div>
+                        <div class="swatch-hex">#0284c7</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- 2. TIPOGRAFÍA -->
+    <!-- ============================================ -->
+    <section class="style-section">
+        <h2 class="style-section-title">✍️ 2. Tipografía <small>Typography</small></h2>
+        <div class="style-section-body">
+            <p class="text-muted mb-3">
+                <strong>Montserrat</strong> para títulos y encabezados (Bold 700 / ExtraBold 800).
+                <strong>Open Sans</strong> para textos, tablas y formularios (Regular 400 / SemiBold 600).
+            </p>
+
+            <div class="type-sample">
+                <div class="type-meta">H1 · Montserrat ExtraBold 800 · 2.25rem</div>
+                <h1>Gestión Hotelera Integral</h1>
+            </div>
+            <div class="type-sample">
+                <div class="type-meta">H2 · Montserrat Bold 700 · 1.75rem</div>
+                <h2>Panel de Recepción</h2>
+            </div>
+            <div class="type-sample">
+                <div class="type-meta">H3 · Montserrat Bold 700 · 1.35rem</div>
+                <h3>Reservaciones del Día</h3>
+            </div>
+            <div class="type-sample">
+                <div class="type-meta">H4 · Montserrat Bold 700 · 1.15rem</div>
+                <h4>Check-in de Huéspedes</h4>
+            </div>
+            <div class="type-sample">
+                <div class="type-meta">Body · Open Sans Regular 400 · 0.95rem</div>
+                <p>Este es un ejemplo de párrafo en el cuerpo del sistema. La tipografía Open Sans ofrece gran legibilidad en pantallas de baja resolución y tablas densas, con excelente apertura de caracteres para formularios extensos.</p>
+            </div>
+            <div class="type-sample">
+                <div class="type-meta">Body Bold · Open Sans SemiBold 600 · 0.95rem</div>
+                <p style="font-weight: 600;">Texto en negrita semibold para destacar información importante como nombres de huéspedes, números de habitación o totales.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- 3. BOTONES (4 ESTADOS) -->
+    <!-- ============================================ -->
+    <section class="style-section">
+        <h2 class="style-section-title">🔘 3. Catálogo de Botones <small>4 Estados Interactivos</small></h2>
+        <div class="style-section-body">
+            <p class="text-muted mb-3">
+                Cada variante de botón cuenta con 4 estados: <strong>Normal</strong>, <strong>:hover</strong> (oscurecimiento + elevación),
+                <strong>:focus</strong> (halo de pulsación) y <strong>disabled</strong> (opacidad al 50%).
+            </p>
+
+            <h3 class="subsection-title">Botón Primario (Ruby Crimson)</h3>
+            <div class="demo-row">
+                <div class="btn-with-label">
+                    <button class="btn btn-primary">Normal</button>
+                    <small>Normal</small>
+                </div>
+                <div class="btn-with-label">
+                    <button class="btn btn-primary" style="background-color: var(--brand-hover); transform: translateY(-1px); box-shadow: 0 6px 16px rgba(190, 11, 17, 0.3);">Hover</button>
+                    <small>:hover</small>
+                </div>
+                <div class="btn-with-label">
+                    <button class="btn btn-primary" style="box-shadow: 0 0 0 4px rgba(190, 11, 17, 0.25);">Focus</button>
+                    <small>:focus</small>
+                </div>
+                <div class="btn-with-label">
+                    <button class="btn btn-primary" disabled>Disabled</button>
+                    <small>disabled</small>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Botón Secundario (Outline)</h3>
+            <div class="demo-row">
+                <div class="btn-with-label">
+                    <button class="btn btn-outline">Normal</button>
+                    <small>Normal</small>
+                </div>
+                <div class="btn-with-label">
+                    <button class="btn btn-outline" style="background-color: var(--gray-100); border-color: var(--gray-400); color: var(--gray-900);">Hover</button>
+                    <small>:hover</small>
+                </div>
+                <div class="btn-with-label">
+                    <button class="btn btn-outline" disabled>Disabled</button>
+                    <small>disabled</small>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Botón de Peligro (Danger)</h3>
+            <div class="demo-row">
+                <div class="btn-with-label">
+                    <button class="btn btn-danger">Eliminar</button>
+                    <small>Normal</small>
+                </div>
+                <div class="btn-with-label">
+                    <button class="btn btn-danger" disabled>Disabled</button>
+                    <small>disabled</small>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Botón de Éxito (Success)</h3>
+            <div class="demo-row">
+                <div class="btn-with-label">
+                    <button class="btn btn-success">Guardar</button>
+                    <small>Normal</small>
+                </div>
+                <div class="btn-with-label">
+                    <button class="btn btn-success" disabled>Disabled</button>
+                    <small>disabled</small>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Tamaños</h3>
+            <div class="demo-row">
+                <button class="btn btn-primary btn-sm">Small</button>
+                <button class="btn btn-primary">Normal</button>
+                <button class="btn btn-primary btn-lg">Large</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- 4. FORMULARIOS -->
+    <!-- ============================================ -->
+    <section class="style-section">
+        <h2 class="style-section-title">📝 4. Formularios <small>Controles y estados de validación</small></h2>
+        <div class="style-section-body">
+            <div class="form-demo">
+                <div class="form-group">
+                    <label class="form-label">Nombre completo <span class="required">*</span></label>
+                    <input type="text" class="form-control" placeholder="Ej: Juan Pérez">
+                    <span class="form-hint">Estado normal</span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Correo electrónico <span class="required">*</span></label>
+                    <input type="email" class="form-control" placeholder="correo@ejemplo.com" style="border-color: var(--brand-primary); box-shadow: 0 0 0 4px rgba(190, 11, 17, 0.12);">
+                    <span class="form-hint">Estado :focus (borde rojo y halo translúcido)</span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Cédula <span class="required">*</span></label>
+                    <input type="text" class="form-control error" value="123">
+                    <span class="form-error">⚠ Formato inválido. Ingrese una cédula válida.</span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Habitación asignada</label>
+                    <select class="form-select">
+                        <option>Seleccione una habitación...</option>
+                        <option>101 - Suite Deluxe</option>
+                        <option>102 - Suite Ejecutiva</option>
+                        <option>103 - Doble Estándar</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Notas adicionales</label>
+                    <textarea class="form-control" rows="3" placeholder="Observaciones del huésped..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Campo deshabilitado</label>
+                    <input type="text" class="form-control" value="No editable" disabled>
+                </div>
+
+                <div class="form-check">
+                    <input type="checkbox" id="term" checked>
+                    <label for="term">Acepto los términos y condiciones del hotel</label>
+                </div>
+
+                <div class="form-check">
+                    <input type="radio" name="tipo" id="radio1" checked>
+                    <label for="radio1">Huésped corporativo (B2B)</label>
+                </div>
+                <div class="form-check">
+                    <input type="radio" name="tipo" id="radio2">
+                    <label for="radio2">Huésped particular (B2C)</label>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- 5. ICONOGRAFÍA -->
+    <!-- ============================================ -->
+    <section class="style-section">
+        <h2 class="style-section-title">🔍 5. Iconografía <small>Acciones del sistema</small></h2>
+        <div class="style-section-body">
+            <p class="text-muted mb-3">
+                Iconos SVG universales para las acciones del CRUD y la navegación.
+            </p>
+            <div class="icons-grid">
+                <div class="icon-demo"><span class="icon-demo-char">＋</span><span class="icon-demo-label">Nuevo</span></div>
+                <div class="icon-demo"><span class="icon-demo-char">✎</span><span class="icon-demo-label">Editar</span></div>
+                <div class="icon-demo"><span class="icon-demo-char">🗑</span><span class="icon-demo-label">Eliminar</span></div>
+                <div class="icon-demo"><span class="icon-demo-char">🔍</span><span class="icon-demo-label">Buscar</span></div>
+                <div class="icon-demo"><span class="icon-demo-char">▼</span><span class="icon-demo-label">Filtrar</span></div>
+                <div class="icon-demo"><span class="icon-demo-char">👁</span><span class="icon-demo-label">Ver</span></div>
+                <div class="icon-demo"><span class="icon-demo-char">🔒</span><span class="icon-demo-label">Bloqueado</span></div>
+                <div class="icon-demo"><span class="icon-demo-char">✓</span><span class="icon-demo-label">Aprobado</span></div>
+                <div class="icon-demo"><span class="icon-demo-char">⚠</span><span class="icon-demo-label">Alerta</span></div>
+                <div class="icon-demo"><span class="icon-demo-char">✕</span><span class="icon-demo-label">Cancelar</span></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- 6. BADGES -->
+    <!-- ============================================ -->
+    <section class="style-section">
+        <h2 class="style-section-title">🏷️ 6. Badges <small>Indicadores de estado</small></h2>
+        <div class="style-section-body">
+            <div class="demo-row">
+                <span class="badge badge-success">✓ Disponible</span>
+                <span class="badge badge-warning">⏳ Pendiente</span>
+                <span class="badge badge-danger">✕ Ocupada</span>
+                <span class="badge badge-info">ℹ Mantenimiento</span>
+                <span class="badge badge-primary">★ VIP</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- 7. MODALES INTERACTIVOS -->
+    <!-- ============================================ -->
+    <section class="style-section">
+        <h2 class="style-section-title">🪟 7. Modales <small>Diálogos interactivos</small></h2>
+        <div class="style-section-body">
+            <p class="text-muted mb-3">
+                Haga clic en cada botón para abrir el modal correspondiente. Estos son los 3 tipos de modales obligatorios del sistema.
+            </p>
+
+            <div class="demo-row">
+                <button class="btn btn-success" onclick="openModal('modalSuccess')">
+                    <span>✓</span> Éxito
+                </button>
+                <button class="btn btn-danger" onclick="openModal('modalError')">
+                    <span>✕</span> Error
+                </button>
+                <button class="btn btn-danger" onclick="openModal('modalConfirm')">
+                    <span>🗑</span> Confirmar Eliminación
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- 8. TOASTS -->
+    <!-- ============================================ -->
+    <section class="style-section">
+        <h2 class="style-section-title">🔔 8. Toasts Temporizados <small>Alertas flotantes con temporizador</small></h2>
+        <div class="style-section-body">
+            <p class="text-muted mb-3">
+                Haga clic en cada botón para lanzar el toast. La cuenta regresiva en segundos es visible en la esquina inferior derecha del toast.
+            </p>
+
+            <div class="demo-row">
+                <button class="btn btn-success" onclick="showToast('success', '¡Registro Exitoso!', 'Los datos fueron guardados correctamente.')">
+                    Toast Success
+                </button>
+                <button class="btn btn-danger" onclick="showToast('danger', 'Error al procesar', 'Verifique campos obligatorios.')">
+                    Toast Error
+                </button>
+                <button class="btn btn-warning" onclick="showToast('warning', 'Atención', 'Este registro ya existe en el sistema.')">
+                    Toast Warning
+                </button>
+                <button class="btn btn-outline" onclick="showToast('info', 'Información', 'Nuevo huésped registrado hace un momento.')">
+                    Toast Info
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ -->
+    <!-- FOOTER -->
+    <!-- ============================================ -->
+    <footer style="text-align: center; padding: 2rem 0; color: var(--gray-500); font-size: 0.85rem;">
+        <p>Biotel Suites · Sistema de Gestión Hotelera · ADS-433 · Lapso 2-2026</p>
+        <p>Facilitador: Prof. Eduardo Nieves · IUJO Extensión Barquisimeto</p>
+    </footer>
+
+    <!-- ============================================ -->
+    <!-- MODALES -->
+    <!-- ============================================ -->
+
+    <!-- Modal Éxito -->
+    <div class="modal-overlay" id="modalSuccess">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>✓ Registro Exitoso</h3>
+                <button class="modal-close" onclick="closeModal('modalSuccess')">×</button>
+            </div>
+            <div class="modal-body">
+                <p>Los datos fueron guardados correctamente.</p>
+                <p class="text-muted" style="font-size: 0.85rem;">El huésped ha sido registrado en el sistema y su habitación asignada.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success" onclick="closeModal('modalSuccess')">Aceptar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Error -->
+    <div class="modal-overlay" id="modalError">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>⚠ Error al procesar datos</h3>
+                <button class="modal-close" onclick="closeModal('modalError')">×</button>
+            </div>
+            <div class="modal-body">
+                <p>Verifique los campos obligatorios marcados en rojo.</p>
+                <p class="text-muted" style="font-size: 0.85rem;">Los datos ingresados se mantienen para que pueda corregir y reintentar sin perder información.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('modalError')">Cerrar</button>
+                <button class="btn btn-danger" onclick="closeModal('modalError')">Reintentar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Confirmación de Eliminación -->
+    <div class="modal-overlay" id="modalConfirm">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>🗑 Confirmar Eliminación</h3>
+                <button class="modal-close" onclick="closeModal('modalConfirm')">×</button>
+            </div>
+            <div class="modal-body">
+                <p><strong>¿Está seguro de eliminar este registro?</strong></p>
+                <p class="text-muted" style="font-size: 0.85rem;">Esta acción no se puede deshacer. El registro se eliminará permanentemente de la base de datos.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('modalConfirm')">Cancelar</button>
+                <button class="btn btn-danger" onclick="closeModal('modalConfirm'); showToast('success', 'Eliminado', 'El registro fue eliminado correctamente.');">
+                    Sí, eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenedor de Toasts -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ============================================ -->
+    <!-- SCRIPTS -->
+    <!-- ============================================ -->
+    <script>
+        // ===== MODALES =====
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        // Cerrar al hacer clic fuera del modal
+        document.querySelectorAll('.modal-overlay').forEach(function(overlay) {
+            overlay.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                }
+            });
+        });
+
+        // ===== TOASTS =====
+        function showToast(type, title, message) {
+            var container = document.getElementById('toastContainer');
+            var seconds = 5;
+
+            var icons = {
+                success: '✓',
+                danger: '✕',
+                warning: '⚠',
+                info: 'ℹ'
+            };
+
+            var toast = document.createElement('div');
+            toast.className = 'toast toast-' + type;
+            toast.innerHTML = 
+                '<span class="toast-icon">' + icons[type] + '</span>' +
+                '<div class="toast-content">' +
+                    '<div class="toast-title">' + title + '</div>' +
+                    '<p class="toast-message">' + message + '</p>' +
+                '</div>' +
+                '<button class="toast-close" onclick="this.parentElement.remove()">×</button>' +
+                '<span class="toast-timer">' + seconds + 's</span>';
+
+            container.appendChild(toast);
+
+            // Temporizador
+            var timerEl = toast.querySelector('.toast-timer');
+            var interval = setInterval(function() {
+                seconds--;
+                timerEl.textContent = seconds + 's';
+                if (seconds <= 0) {
+                    clearInterval(interval);
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateX(120%)';
+                    setTimeout(function() { toast.remove(); }, 300);
+                }
+            }, 1000);
+        }
+    </script>
+
+</body>
+</html>

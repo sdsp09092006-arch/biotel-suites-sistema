@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservaciones — Biotel Suites</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="dashboard-layout">
+
+        <!-- ============================================ -->
+        <!-- SIDEBAR -->
+        <!-- ============================================ -->
+        <aside class="sidebar" id="sidebar">
+            <a href="dashboard.html" class="sidebar-brand">
+                <span class="sidebar-logo">BS</span>
+                <span>Biotel Suites</span>
+            </a>
+
+            <nav class="sidebar-nav">
+                <div class="nav-label">Principal</div>
+                <a href="dashboard.html" class="nav-link"><span>📊</span> <span>Dashboard</span></a>
+                <a href="crud.html" class="nav-link active"><span>🧾</span> <span>Reservaciones</span></a>
+                <a href="#" class="nav-link"><span>🛏️</span> <span>Habitaciones</span></a>
+                <a href="#" class="nav-link"><span>👥</span> <span>Huéspedes</span></a>
+
+                <div class="nav-label">Gestión</div>
+                <a href="#" class="nav-link"><span>🔑</span> <span>Check-in / Check-out</span></a>
+                <a href="#" class="nav-link"><span>🧹</span> <span>Ama de Llaves</span></a>
+                <a href="#" class="nav-link"><span>💰</span> <span>Facturación</span></a>
+
+                <div class="nav-label">Sistema</div>
+                <a href="sistema_diseno.html" class="nav-link"><span>🎨</span> <span>Sistema de Diseño</span></a>
+                <a href="login.html" class="nav-link"><span>🚪</span> <span>Cerrar Sesión</span></a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-avatar">AC</div>
+                <div>
+                    <div style="font-weight: 600; color: white;">Ana Castillo</div>
+                    <div style="font-size: 0.75rem;">Recepcionista</div>
+                </div>
+            </div>
+        </aside>
+
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- ============================================ -->
+        <!-- MAIN CONTENT -->
+        <!-- ============================================ -->
+        <div class="main-content">
+
+            <header class="topbar">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <button class="hamburger" id="hamburger" aria-label="Menú">☰</button>
+                    <h1 class="topbar-title">Gestión de Reservaciones</h1>
+                </div>
+                <div class="topbar-user">
+                    <div class="topbar-user-info">
+                        <div class="topbar-user-name">Ana Castillo</div>
+                        <div class="topbar-user-role">Recepcionista</div>
+                    </div>
+                    <div class="sidebar-avatar" style="width: 42px; height: 42px; font-size: 0.9rem;">AC</div>
+                </div>
+            </header>
+
+            <main class="content">
+
+                <!-- Page header -->
+                <div class="page-header">
+                    <div>
+                        <h1>Reservaciones</h1>
+                        <p>Gestione las reservas activas del hotel</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="abrirModalCrear()">
+                        <span>＋</span> Nueva Reservación
+                    </button>
+                </div>
+
+                <!-- Toolbar: Búsqueda + Filtros -->
+                <div class="toolbar">
+                    <div class="search-box">
+                        <div class="input-group">
+                            <span class="input-icon">🔍</span>
+                            <input
+                                type="text"
+                                id="buscador"
+                                class="form-control"
+                                placeholder="Buscar por huésped, habitación o cédula..."
+                            >
+                        </div>
+                    </div>
+
+                    <select id="filtroEstado" class="form-select" style="max-width: 200px;">
+                        <option value="">Todos los estados</option>
+                        <option value="Confirmada">Confirmada</option>
+                        <option value="Pendiente">Pendiente</option>
+                        <option value="Cancelada">Cancelada</option>
+                        <option value="Por verificar">Por verificar</option>
+                    </select>
+
+                    <select id="filtroHabitacion" class="form-select" style="max-width: 200px;">
+                        <option value="">Todas las habitaciones</option>
+                        <option value="Suite Deluxe">Suite Deluxe</option>
+                        <option value="Ejecutiva">Ejecutiva</option>
+                        <option value="Doble Estándar">Doble Estándar</option>
+                        <option value="Suite Presidencial">Suite Presidencial</option>
+                    </select>
+                </div>
+
+                <!-- Tabla -->
+                <div class="table-wrapper">
+                    <table class="table" id="tablaReservas">
+                        <thead>
+                            <tr>
+                                <th>Huésped</th>
+                                <th>Cédula</th>
+                                <th>Habitación</th>
+                                <th>Check-in</th>
+                                <th>Check-out</th>
+                                <th>Estado</th>
+                                <th style="text-align: right;">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyReservas">
+                            <!-- Las filas se generan con JavaScript -->
+                        </tbody>
+                    </table>
+
+                    <div id="sinResultados" style="text-align: center; padding: 3rem 1rem; color: var(--gray-500); display: none;">
+                        <div style="font-size: 3rem; margin-bottom: 0.5rem;">🔍</div>
+                        <p>No se encontraron reservaciones con esos filtros.</p>
+                    </div>
+                </div>
+
+                <div style="margin-top: 1rem; text-align: right; color: var(--gray-500); font-size: 0.85rem;">
+                    Total: <strong id="contadorFilas">0</strong> reservación(es)
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- MODAL: CREAR / EDITAR RESERVA -->
+    <!-- ============================================ -->
+    <div class="modal-overlay" id="modalForm">
+        <div class="modal" style="max-width: 560px;">
+            <div class="modal-header">
+                <h3 id="modalTitulo">Nueva Reservación</h3>
+                <button class="modal-close" onclick="cerrarModal('modalForm')">×</button>
+            </div>
+
+            <form id="formReserva">
+                <div class="modal-body">
+                    <input type="hidden" id="reservaId" value="">
+
+                    <div class="form-group">
+                        <label class="form-label" for="inputHuesped">
+                            Nombre del huésped <span class="required">*</span>
+                        </label>
+                        <input type="text" id="inputHuesped" class="form-control" placeholder="Ej: María Delgado" required>
+                        <span class="form-error" id="errorHuesped"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="inputCedula">
+                            Cédula / RIF <span class="required">*</span>
+                        </label>
+                        <input type="text" id="inputCedula" class="form-control" placeholder="Ej: V-12345678" required>
+                        <span class="form-error" id="errorCedula"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="inputHabitacion">
+                            Habitación <span class="required">*</span>
+                        </label>
+                        <select id="inputHabitacion" class="form-select" required>
+                            <option value="">Seleccione una habitación...</option>
+                            <option value="101 - Suite Deluxe">101 - Suite Deluxe</option>
+                            <option value="102 - Suite Ejecutiva">102 - Suite Ejecutiva</option>
+                            <option value="103 - Doble Estándar">103 - Doble Estándar</option>
+                            <option value="104 - Suite Presidencial">104 - Suite Presidencial</option>
+                            <option value="205 - Suite Ejecutiva">205 - Suite Ejecutiva</option>
+                            <option value="312 - Doble Estándar">312 - Doble Estándar</option>
+                        </select>
+                        <span class="form-error" id="errorHabitacion"></span>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label" for="inputCheckin">
+                                Check-in <span class="required">*</span>
+                            </label>
+                            <input type="date" id="inputCheckin" class="form-control" required>
+                            <span class="form-error" id="errorCheckin"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="inputCheckout">
+                                Check-out <span class="required">*</span>
+                            </label>
+                            <input type="date" id="inputCheckout" class="form-control" required>
+                            <span class="form-error" id="errorCheckout"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="inputEstado">
+                            Estado de la reserva
+                        </label>
+                        <select id="inputEstado" class="form-select">
+                            <option value="Pendiente">Pendiente</option>
+                            <option value="Confirmada">Confirmada</option>
+                            <option value="Por verificar">Por verificar</option>
+                            <option value="Cancelada">Cancelada</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline" onclick="cerrarModal('modalForm')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="btnGuardar">
+                        💾 Guardar Reservación
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- MODAL: CONFIRMAR ELIMINACIÓN -->
+    <!-- ============================================ -->
+    <div class="modal-overlay" id="modalEliminar">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>🗑 Confirmar Eliminación</h3>
+                <button class="modal-close" onclick="cerrarModal('modalEliminar')">×</button>
+            </div>
+            <div class="modal-body">
+                <p><strong>¿Está seguro de eliminar esta reservación?</strong></p>
+                <p class="text-muted" style="font-size: 0.9rem;">
+                    Huésped: <strong id="eliminarNombre">—</strong>
+                </p>
+                <p class="text-muted" style="font-size: 0.85rem;">
+                    Esta acción no se puede deshacer.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="cerrarModal('modalEliminar')">Cancelar</button>
+                <button class="btn btn-danger" id="btnConfirmarEliminar">
+                    Sí, eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenedor de Toasts -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // ============================================
+        // NORMALIZAR TEXTO (Mayúsculas + Tildes + Ñ)
+        // ============================================
+        function normalizar(texto) {
+            return texto
+                .toString()
+                .toLowerCase()
+                .normalize('NFD')                    // Separa letras de tildes
+                .replace(/[\u0300-\u036f]/g, '')     // Elimina las tildes
+                .replace(/ñ/g, 'n')                  // Convierte ñ → n
+                .trim();
+        }
+
+        // ============================================
+        // DATOS DE PRUEBA (simula la BD)
+        // ============================================
+        var reservas = [
+            { id: 1, huesped: 'María Delgado', cedula: 'V-12345678', habitacion: '101 - Suite Deluxe', checkin: '2026-09-26', checkout: '2026-09-28', estado: 'Confirmada' },
+            { id: 2, huesped: 'José Marcano', cedula: 'V-28990112', habitacion: '205 - Suite Ejecutiva', checkin: '2026-09-26', checkout: '2026-09-30', estado: 'Pendiente' },
+            { id: 3, huesped: 'Laura Rivas', cedula: 'V-18765432', habitacion: '312 - Doble Estándar', checkin: '2026-09-26', checkout: '2026-09-29', estado: 'Confirmada' },
+            { id: 4, huesped: 'Carlos Bravo', cedula: 'V-14555888', habitacion: '104 - Suite Presidencial', checkin: '2026-09-26', checkout: '2026-10-01', estado: 'Por verificar' },
+            { id: 5, huesped: 'Andrea Peña', cedula: 'V-20333444', habitacion: '103 - Doble Estándar', checkin: '2026-09-27', checkout: '2026-09-29', estado: 'Confirmada' },
+            { id: 6, huesped: 'Roberto Sánchez', cedula: 'V-9876543', habitacion: '102 - Suite Ejecutiva', checkin: '2026-09-28', checkout: '2026-09-30', estado: 'Cancelada' }
+        ];
+
+        var proximoId = 7;
+
+        // ============================================
+        // RENDERIZAR TABLA
+        // ============================================
+        function renderizarTabla() {
+            var tbody = document.getElementById('tbodyReservas');
+            var contador = document.getElementById('contadorFilas');
+            var sinResultados = document.getElementById('sinResultados');
+
+            // ✅ Normalizar la búsqueda (ignora mayúsculas y tildes)
+            var buscar = normalizar(document.getElementById('buscador').value.trim());
+            var filtroEstado = document.getElementById('filtroEstado').value;
+            var filtroHabitacion = document.getElementById('filtroHabitacion').value;
+
+            var filtradas = reservas.filter(function(r) {
+                // ✅ Normalizar los campos del registro para comparar
+                var coincideBuscar = !buscar ||
+                    normalizar(r.huesped).includes(buscar) ||
+                    normalizar(r.cedula).includes(buscar) ||
+                    normalizar(r.habitacion).includes(buscar);
+
+                var coincideEstado = !filtroEstado || r.estado === filtroEstado;
+                var coincideHabitacion = !filtroHabitacion || r.habitacion.includes(filtroHabitacion);
+
+                return coincideBuscar && coincideEstado && coincideHabitacion;
+            });
+
+            tbody.innerHTML = '';
+
+            if (filtradas.length === 0) {
+                sinResultados.style.display = 'block';
+                contador.textContent = '0';
+                return;
+            }
+
+            sinResultados.style.display = 'none';
+
+            filtradas.forEach(function(r) {
+                var badgeClass = 'badge-info';
+                var badgeIcon = 'ℹ';
+                if (r.estado === 'Confirmada') { badgeClass = 'badge-success'; badgeIcon = '✓'; }
+                else if (r.estado === 'Pendiente') { badgeClass = 'badge-warning'; badgeIcon = '⏳'; }
+                else if (r.estado === 'Cancelada') { badgeClass = 'badge-danger'; badgeIcon = '✕'; }
+
+                var fila = document.createElement('tr');
+                fila.innerHTML =
+                    '<td><strong>' + r.huesped + '</strong></td>' +
+                    '<td>' + r.cedula + '</td>' +
+                    '<td>' + r.habitacion + '</td>' +
+                    '<td>' + formatearFecha(r.checkin) + '</td>' +
+                    '<td>' + formatearFecha(r.checkout) + '</td>' +
+                    '<td><span class="badge ' + badgeClass + '">' + badgeIcon + ' ' + r.estado + '</span></td>' +
+                    '<td style="text-align: right;">' +
+                        '<button class="btn btn-icon" onclick="abrirModalEditar(' + r.id + ')" title="Editar">✎</button> ' +
+                        '<button class="btn btn-icon" onclick="abrirModalEliminar(' + r.id + ')" title="Eliminar" style="background-color: var(--danger-light); color: var(--danger);">🗑</button>' +
+                    '</td>';
+                tbody.appendChild(fila);
+            });
+
+            contador.textContent = filtradas.length;
+        }
+
+        // ============================================
+        // FORMATEAR FECHA
+        // ============================================
+        function formatearFecha(fecha) {
+            if (!fecha) return '—';
+            var partes = fecha.split('-');
+            return partes[2] + '/' + partes[1] + '/' + partes[0];
+        }
+
+        // ============================================
+        // ABRIR MODAL CREAR
+        // ============================================
+        function abrirModalCrear() {
+            document.getElementById('modalTitulo').textContent = 'Nueva Reservación';
+            document.getElementById('formReserva').reset();
+            document.getElementById('reservaId').value = '';
+            limpiarErrores();
+            abrirModal('modalForm');
+        }
+
+        // ============================================
+        // ABRIR MODAL EDITAR
+        // ============================================
+        function abrirModalEditar(id) {
+            var r = reservas.find(function(x) { return x.id === id; });
+            if (!r) return;
+
+            document.getElementById('modalTitulo').textContent = 'Editar Reservación';
+            document.getElementById('reservaId').value = r.id;
+            document.getElementById('inputHuesped').value = r.huesped;
+            document.getElementById('inputCedula').value = r.cedula;
+            document.getElementById('inputHabitacion').value = r.habitacion;
+            document.getElementById('inputCheckin').value = r.checkin;
+            document.getElementById('inputCheckout').value = r.checkout;
+            document.getElementById('inputEstado').value = r.estado;
+
+            limpiarErrores();
+            abrirModal('modalForm');
+        }
+
+        // ============================================
+        // ABRIR MODAL ELIMINAR
+        // ============================================
+        var idAEliminar = null;
+
+        function abrirModalEliminar(id) {
+            var r = reservas.find(function(x) { return x.id === id; });
+            if (!r) return;
+
+            idAEliminar = id;
+            document.getElementById('eliminarNombre').textContent = r.huesped;
+            abrirModal('modalEliminar');
+        }
+
+        // ============================================
+        // GUARDAR (Crear o Editar)
+        // ============================================
+        document.getElementById('formReserva').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            if (!validarFormulario()) return;
+
+            var id = document.getElementById('reservaId').value;
+            var datos = {
+                huesped: document.getElementById('inputHuesped').value.trim(),
+                cedula: document.getElementById('inputCedula').value.trim(),
+                habitacion: document.getElementById('inputHabitacion').value,
+                checkin: document.getElementById('inputCheckin').value,
+                checkout: document.getElementById('inputCheckout').value,
+                estado: document.getElementById('inputEstado').value
+            };
+
+            if (id) {
+                // Editar
+                var r = reservas.find(function(x) { return x.id == id; });
+                if (r) {
+                    Object.assign(r, datos);
+                }
+                showToast('success', 'Reservación actualizada', 'Los datos se guardaron correctamente.');
+            } else {
+                // Crear
+                datos.id = proximoId++;
+                reservas.push(datos);
+                showToast('success', '¡Reservación creada!', 'La nueva reserva fue registrada exitosamente.');
+            }
+
+            cerrarModal('modalForm');
+            renderizarTabla();
+        });
+
+        // ============================================
+        // ELIMINAR
+        // ============================================
+        document.getElementById('btnConfirmarEliminar').addEventListener('click', function() {
+            if (idAEliminar !== null) {
+                reservas = reservas.filter(function(r) { return r.id !== idAEliminar; });
+                idAEliminar = null;
+                cerrarModal('modalEliminar');
+                renderizarTabla();
+                showToast('success', 'Reservación eliminada', 'El registro fue eliminado permanentemente.');
+            }
+        });
+
+        // ============================================
+        // VALIDAR FORMULARIO
+        // ============================================
+        function validarFormulario() {
+            limpiarErrores();
+            var valido = true;
+
+            var huesped = document.getElementById('inputHuesped');
+            var cedula = document.getElementById('inputCedula');
+            var habitacion = document.getElementById('inputHabitacion');
+            var checkin = document.getElementById('inputCheckin');
+            var checkout = document.getElementById('inputCheckout');
+
+            if (!huesped.value.trim()) {
+                marcarError(huesped, 'errorHuesped', 'El nombre es obligatorio.');
+                valido = false;
+            }
+
+            var cedulaRegex = /^[VEJvej]-?\d{6,10}$/;
+            if (!cedula.value.trim()) {
+                marcarError(cedula, 'errorCedula', 'La cédula es obligatoria.');
+                valido = false;
+            } else if (!cedulaRegex.test(cedula.value.trim())) {
+                marcarError(cedula, 'errorCedula', 'Formato inválido (V-12345678).');
+                valido = false;
+            }
+
+            if (!habitacion.value) {
+                marcarError(habitacion, 'errorHabitacion', 'Seleccione una habitación.');
+                valido = false;
+            }
+
+            if (!checkin.value) {
+                marcarError(checkin, 'errorCheckin', 'Fecha de entrada obligatoria.');
+                valido = false;
+            }
+
+            if (!checkout.value) {
+                marcarError(checkout, 'errorCheckout', 'Fecha de salida obligatoria.');
+                valido = false;
+            } else if (checkin.value && checkout.value && checkout.value < checkin.value) {
+                marcarError(checkout, 'errorCheckout', 'Debe ser posterior al check-in.');
+                valido = false;
+            }
+
+            if (!valido) {
+                showToast('danger', 'Error al guardar', 'Verifique los campos marcados en rojo.');
+            }
+
+            return valido;
+        }
+
+        function marcarError(input, errorId, mensaje) {
+            input.classList.add('error');
+            document.getElementById(errorId).textContent = '⚠ ' + mensaje;
+        }
+
+        function limpiarErrores() {
+            document.querySelectorAll('.form-control, .form-select').forEach(function(el) {
+                el.classList.remove('error');
+            });
+            document.querySelectorAll('.form-error').forEach(function(el) {
+                el.textContent = '';
+            });
+        }
+
+        // ============================================
+        // MODALES
+        // ============================================
+        function abrirModal(id) {
+            document.getElementById(id).classList.add('active');
+        }
+
+        function cerrarModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        document.querySelectorAll('.modal-overlay').forEach(function(overlay) {
+            overlay.addEventListener('click', function(e) {
+                if (e.target === this) this.classList.remove('active');
+            });
+        });
+
+        // ============================================
+        // TOASTS
+        // ============================================
+        function showToast(type, title, message) {
+            var container = document.getElementById('toastContainer');
+            var seconds = 5;
+            var icons = { success: '✓', danger: '✕', warning: '⚠', info: 'ℹ' };
+
+            var toast = document.createElement('div');
+            toast.className = 'toast toast-' + type;
+            toast.innerHTML =
+                '<span class="toast-icon">' + icons[type] + '</span>' +
+                '<div class="toast-content">' +
+                    '<div class="toast-title">' + title + '</div>' +
+                    '<p class="toast-message">' + message + '</p>' +
+                '</div>' +
+                '<button class="toast-close" onclick="this.parentElement.remove()">×</button>' +
+                '<span class="toast-timer">' + seconds + 's</span>';
+
+            container.appendChild(toast);
+
+            var timerEl = toast.querySelector('.toast-timer');
+            var interval = setInterval(function() {
+                seconds--;
+                timerEl.textContent = seconds + 's';
+                if (seconds <= 0) {
+                    clearInterval(interval);
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateX(120%)';
+                    setTimeout(function() { toast.remove(); }, 300);
+                }
+            }, 1000);
+        }
+
+        // ============================================
+        // SIDEBAR MÓVIL
+        // ============================================
+        var sidebar = document.getElementById('sidebar');
+        var overlay = document.getElementById('sidebarOverlay');
+        var hamburger = document.getElementById('hamburger');
+
+        hamburger.addEventListener('click', function() {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        });
+
+        overlay.addEventListener('click', function() {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('active');
+        });
+
+        // ============================================
+        // FILTROS EN TIEMPO REAL
+        // ============================================
+        document.getElementById('buscador').addEventListener('input', renderizarTabla);
+        document.getElementById('filtroEstado').addEventListener('change', renderizarTabla);
+        document.getElementById('filtroHabitacion').addEventListener('change', renderizarTabla);
+
+        // ============================================
+        // INICIALIZAR
+        // ============================================
+        renderizarTabla();
+    </script>
+
+</body>
+</html>
