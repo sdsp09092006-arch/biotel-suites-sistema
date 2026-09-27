@@ -41,6 +41,7 @@ La Gerencia de Recepción del hotel Biotel Suites opera actualmente con hojas de
 | Santiago Salazar | 31.662.843 |
 | Angelo Navarro | 32.307.009 |
 | César Araujo | 30.004.036 |
+| Andres Jatar | 30.587.623 |
 
 ## 🛠️ Tecnologías
 
