@@ -1,3 +1,4 @@
+
 # ============================================
 # Archivos que NO se suben a GitHub
 # ============================================
@@ -40,3 +41,18 @@ htdocs_backup/
 *.zip
 *.rar
 *.tar.gz
+=======
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Editores
+.vscode/
+.idea/
+
+# Dependencias
+node_modules/
+vendor/
+
+# Logs
+*.log
