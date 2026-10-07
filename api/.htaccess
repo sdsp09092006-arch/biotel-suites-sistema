@@ -1,0 +1,13 @@
+RewriteEngine On
+
+# Permitir archivos existentes
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Redirigir todo a index.php
+RewriteRule ^(.*)$ index.php [QSA,L]
+
+# Habilitar métodos PUT y DELETE
+<Limit PUT DELETE>
+    Require all granted
+</Limit>
