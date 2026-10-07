@@ -87,12 +87,7 @@
                     <div class="search-box">
                         <div class="input-group">
                             <span class="input-icon">🔍</span>
-                            <input
-                                type="text"
-                                id="buscador"
-                                class="form-control"
-                                placeholder="Buscar por huésped, habitación o cédula..."
-                            >
+                            <input type="text" id="buscador" class="form-control" placeholder="Buscar por huésped, habitación o cédula...">
                         </div>
                     </div>
 
@@ -113,8 +108,22 @@
                     </select>
                 </div>
 
+                <!-- Estado: Cargando -->
+                <div id="loadingState" style="text-align: center; padding: 4rem 1rem; display: none;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">⏳</div>
+                    <p style="color: var(--gray-500);">Cargando reservaciones...</p>
+                </div>
+
+                <!-- Estado: Error -->
+                <div id="errorState" style="text-align: center; padding: 4rem 1rem; display: none;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">⚠️</div>
+                    <p style="color: var(--danger); font-weight: 600;">Error de conexión</p>
+                    <p id="errorMessage" style="color: var(--gray-500); margin-bottom: 1rem;"></p>
+                    <button class="btn btn-primary" onclick="cargarReservas()">🔄 Reintentar</button>
+                </div>
+
                 <!-- Tabla -->
-                <div class="table-wrapper">
+                <div class="table-wrapper" id="tablaWrapper" style="display: none;">
                     <table class="table" id="tablaReservas">
                         <thead>
                             <tr>
@@ -127,15 +136,13 @@
                                 <th style="text-align: right;">Acciones</th>
                             </tr>
                         </thead>
-                        <tbody id="tbodyReservas">
-                            <!-- Las filas se generan con JavaScript -->
-                        </tbody>
+                        <tbody id="tbodyReservas"></tbody>
                     </table>
+                </div>
 
-                    <div id="sinResultados" style="text-align: center; padding: 3rem 1rem; color: var(--gray-500); display: none;">
-                        <div style="font-size: 3rem; margin-bottom: 0.5rem;">🔍</div>
-                        <p>No se encontraron reservaciones con esos filtros.</p>
-                    </div>
+                <div id="sinResultados" style="text-align: center; padding: 3rem 1rem; color: var(--gray-500); display: none;">
+                    <div style="font-size: 3rem; margin-bottom: 0.5rem;">🔍</div>
+                    <p>No se encontraron reservaciones con esos filtros.</p>
                 </div>
 
                 <div style="margin-top: 1rem; text-align: right; color: var(--gray-500); font-size: 0.85rem;">
@@ -156,80 +163,64 @@
                 <button class="modal-close" onclick="cerrarModal('modalForm')">×</button>
             </div>
 
-            <form id="formReserva">
-                <div class="modal-body">
-                    <input type="hidden" id="reservaId" value="">
+            <div class="modal-body">
+                <input type="hidden" id="reservaId" value="">
 
+                <div class="form-group">
+                    <label class="form-label" for="inputHuesped">Nombre del huésped <span class="required">*</span></label>
+                    <input type="text" id="inputHuesped" class="form-control" placeholder="Ej: María Delgado">
+                    <span class="form-error" id="errorHuesped"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="inputCedula">Cédula / RIF <span class="required">*</span></label>
+                    <input type="text" id="inputCedula" class="form-control" placeholder="Ej: V-12345678">
+                    <span class="form-error" id="errorCedula"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="inputHabitacion">Habitación <span class="required">*</span></label>
+                    <select id="inputHabitacion" class="form-select">
+                        <option value="">Seleccione una habitación...</option>
+                        <option value="101 - Suite Deluxe">101 - Suite Deluxe</option>
+                        <option value="102 - Suite Ejecutiva">102 - Suite Ejecutiva</option>
+                        <option value="103 - Doble Estándar">103 - Doble Estándar</option>
+                        <option value="104 - Suite Presidencial">104 - Suite Presidencial</option>
+                        <option value="205 - Suite Ejecutiva">205 - Suite Ejecutiva</option>
+                        <option value="312 - Doble Estándar">312 - Doble Estándar</option>
+                    </select>
+                    <span class="form-error" id="errorHabitacion"></span>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                     <div class="form-group">
-                        <label class="form-label" for="inputHuesped">
-                            Nombre del huésped <span class="required">*</span>
-                        </label>
-                        <input type="text" id="inputHuesped" class="form-control" placeholder="Ej: María Delgado" required>
-                        <span class="form-error" id="errorHuesped"></span>
+                        <label class="form-label" for="inputCheckin">Check-in <span class="required">*</span></label>
+                        <input type="date" id="inputCheckin" class="form-control">
+                        <span class="form-error" id="errorCheckin"></span>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label" for="inputCedula">
-                            Cédula / RIF <span class="required">*</span>
-                        </label>
-                        <input type="text" id="inputCedula" class="form-control" placeholder="Ej: V-12345678" required>
-                        <span class="form-error" id="errorCedula"></span>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label" for="inputHabitacion">
-                            Habitación <span class="required">*</span>
-                        </label>
-                        <select id="inputHabitacion" class="form-select" required>
-                            <option value="">Seleccione una habitación...</option>
-                            <option value="101 - Suite Deluxe">101 - Suite Deluxe</option>
-                            <option value="102 - Suite Ejecutiva">102 - Suite Ejecutiva</option>
-                            <option value="103 - Doble Estándar">103 - Doble Estándar</option>
-                            <option value="104 - Suite Presidencial">104 - Suite Presidencial</option>
-                            <option value="205 - Suite Ejecutiva">205 - Suite Ejecutiva</option>
-                            <option value="312 - Doble Estándar">312 - Doble Estándar</option>
-                        </select>
-                        <span class="form-error" id="errorHabitacion"></span>
-                    </div>
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                        <div class="form-group">
-                            <label class="form-label" for="inputCheckin">
-                                Check-in <span class="required">*</span>
-                            </label>
-                            <input type="date" id="inputCheckin" class="form-control" required>
-                            <span class="form-error" id="errorCheckin"></span>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label" for="inputCheckout">
-                                Check-out <span class="required">*</span>
-                            </label>
-                            <input type="date" id="inputCheckout" class="form-control" required>
-                            <span class="form-error" id="errorCheckout"></span>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label" for="inputEstado">
-                            Estado de la reserva
-                        </label>
-                        <select id="inputEstado" class="form-select">
-                            <option value="Pendiente">Pendiente</option>
-                            <option value="Confirmada">Confirmada</option>
-                            <option value="Por verificar">Por verificar</option>
-                            <option value="Cancelada">Cancelada</option>
-                        </select>
+                        <label class="form-label" for="inputCheckout">Check-out <span class="required">*</span></label>
+                        <input type="date" id="inputCheckout" class="form-control">
+                        <span class="form-error" id="errorCheckout"></span>
                     </div>
                 </div>
 
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline" onclick="cerrarModal('modalForm')">Cancelar</button>
-                    <button type="submit" class="btn btn-primary" id="btnGuardar">
-                        💾 Guardar Reservación
-                    </button>
+                <div class="form-group">
+                    <label class="form-label" for="inputEstado">Estado de la reserva</label>
+                    <select id="inputEstado" class="form-select">
+                        <option value="Pendiente">Pendiente</option>
+                        <option value="Confirmada">Confirmada</option>
+                        <option value="Por verificar">Por verificar</option>
+                        <option value="Cancelada">Cancelada</option>
+                    </select>
                 </div>
-            </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" onclick="cerrarModal('modalForm')">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="btnGuardar">💾 Guardar Reservación</button>
+            </div>
         </div>
     </div>
 
@@ -244,18 +235,12 @@
             </div>
             <div class="modal-body">
                 <p><strong>¿Está seguro de eliminar esta reservación?</strong></p>
-                <p class="text-muted" style="font-size: 0.9rem;">
-                    Huésped: <strong id="eliminarNombre">—</strong>
-                </p>
-                <p class="text-muted" style="font-size: 0.85rem;">
-                    Esta acción no se puede deshacer.
-                </p>
+                <p class="text-muted" style="font-size: 0.9rem;">Huésped: <strong id="eliminarNombre">—</strong></p>
+                <p class="text-muted" style="font-size: 0.85rem;">Esta acción no se puede deshacer.</p>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-outline" onclick="cerrarModal('modalEliminar')">Cancelar</button>
-                <button class="btn btn-danger" id="btnConfirmarEliminar">
-                    Sí, eliminar
-                </button>
+                <button class="btn btn-danger" id="btnConfirmarEliminar">Sí, eliminar</button>
             </div>
         </div>
     </div>
@@ -265,54 +250,111 @@
 
     <script>
         // ============================================
-        // NORMALIZAR TEXTO (Mayúsculas + Tildes + Ñ)
+        // CONFIGURACIÓN DE LA API
+        // ============================================
+        const API_URL = 'http://localhost/biotel-suites-sistema/api/reservas';
+
+        // ============================================
+        // NORMALIZAR TEXTO
         // ============================================
         function normalizar(texto) {
             return texto
                 .toString()
                 .toLowerCase()
-                .normalize('NFD')                    // Separa letras de tildes
-                .replace(/[\u0300-\u036f]/g, '')     // Elimina las tildes
-                .replace(/ñ/g, 'n')                  // Convierte ñ → n
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/ñ/g, 'n')
                 .trim();
         }
 
         // ============================================
-        // DATOS DE PRUEBA (simula la BD)
+        // ESTADO GLOBAL
         // ============================================
-        var reservas = [
-            { id: 1, huesped: 'María Delgado', cedula: 'V-12345678', habitacion: '101 - Suite Deluxe', checkin: '2026-09-26', checkout: '2026-09-28', estado: 'Confirmada' },
-            { id: 2, huesped: 'José Marcano', cedula: 'V-28990112', habitacion: '205 - Suite Ejecutiva', checkin: '2026-09-26', checkout: '2026-09-30', estado: 'Pendiente' },
-            { id: 3, huesped: 'Laura Rivas', cedula: 'V-18765432', habitacion: '312 - Doble Estándar', checkin: '2026-09-26', checkout: '2026-09-29', estado: 'Confirmada' },
-            { id: 4, huesped: 'Carlos Bravo', cedula: 'V-14555888', habitacion: '104 - Suite Presidencial', checkin: '2026-09-26', checkout: '2026-10-01', estado: 'Por verificar' },
-            { id: 5, huesped: 'Andrea Peña', cedula: 'V-20333444', habitacion: '103 - Doble Estándar', checkin: '2026-09-27', checkout: '2026-09-29', estado: 'Confirmada' },
-            { id: 6, huesped: 'Roberto Sánchez', cedula: 'V-9876543', habitacion: '102 - Suite Ejecutiva', checkin: '2026-09-28', checkout: '2026-09-30', estado: 'Cancelada' }
-        ];
+        let reservasCache = [];
+        let idAEliminar = null;
 
-        var proximoId = 7;
+        // ============================================
+        // ESTADOS DE UI
+        // ============================================
+        function mostrarLoading() {
+            document.getElementById('loadingState').style.display = 'block';
+            document.getElementById('tablaWrapper').style.display = 'none';
+            document.getElementById('sinResultados').style.display = 'none';
+            document.getElementById('errorState').style.display = 'none';
+        }
+
+        function mostrarTabla() {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('tablaWrapper').style.display = 'block';
+            document.getElementById('errorState').style.display = 'none';
+        }
+
+        function mostrarError(mensaje) {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('tablaWrapper').style.display = 'none';
+            document.getElementById('sinResultados').style.display = 'none';
+            document.getElementById('errorState').style.display = 'block';
+            document.getElementById('errorMessage').textContent = mensaje;
+        }
+
+        // ============================================
+        // CARGAR RESERVAS DESDE LA API
+        // ============================================
+        async function cargarReservas() {
+    console.log('🟡 [1] Iniciando cargarReservas');
+    mostrarLoading();
+
+    try {
+        console.log('🟡 [2] Haciendo fetch a:', API_URL);
+        const response = await fetch(API_URL);
+        console.log('🟢 [3] Response status:', response.status);
+
+        if (!response.ok) throw new Error('Error del servidor: ' + response.status);
+
+        const data = await response.json();
+        console.log('🟢 [4] Data recibida:', data);
+        console.log('🟢 [5] Total reservas:', data.data ? data.data.length : 'undefined');
+
+        if (data.success) {
+            reservasCache = data.data;
+
+            // ✅ DEBUG: Mostrar los datos específicos
+            console.log('🟢 [6] Cache actualizado. Primera reserva:', reservasCache[0]);
+            console.log('🟢 [7] Buscando reserva id=1:', reservasCache.find(r => r.id == 1));
+
+            renderizarTabla();
+            mostrarTabla();
+            console.log('🟢 [8] Tabla renderizada');
+        } else {
+            throw new Error(data.message || 'Error al cargar datos');
+        }
+    } catch (error) {
+        console.error('🔴 [ERROR]', error);
+        mostrarError('No se pudieron cargar las reservaciones.');
+        showToast('danger', 'Error de conexión', 'No se pudo conectar con el servidor.');
+    }
+}
 
         // ============================================
         // RENDERIZAR TABLA
         // ============================================
         function renderizarTabla() {
-            var tbody = document.getElementById('tbodyReservas');
-            var contador = document.getElementById('contadorFilas');
-            var sinResultados = document.getElementById('sinResultados');
+            const tbody = document.getElementById('tbodyReservas');
+            const contador = document.getElementById('contadorFilas');
+            const sinResultados = document.getElementById('sinResultados');
 
-            // ✅ Normalizar la búsqueda (ignora mayúsculas y tildes)
-            var buscar = normalizar(document.getElementById('buscador').value.trim());
-            var filtroEstado = document.getElementById('filtroEstado').value;
-            var filtroHabitacion = document.getElementById('filtroHabitacion').value;
+            const buscar = normalizar(document.getElementById('buscador').value.trim());
+            const filtroEstado = document.getElementById('filtroEstado').value;
+            const filtroHabitacion = document.getElementById('filtroHabitacion').value;
 
-            var filtradas = reservas.filter(function(r) {
-                // ✅ Normalizar los campos del registro para comparar
-                var coincideBuscar = !buscar ||
+            const filtradas = reservasCache.filter(function(r) {
+                const coincideBuscar = !buscar ||
                     normalizar(r.huesped).includes(buscar) ||
                     normalizar(r.cedula).includes(buscar) ||
                     normalizar(r.habitacion).includes(buscar);
 
-                var coincideEstado = !filtroEstado || r.estado === filtroEstado;
-                var coincideHabitacion = !filtroHabitacion || r.habitacion.includes(filtroHabitacion);
+                const coincideEstado = !filtroEstado || r.estado === filtroEstado;
+                const coincideHabitacion = !filtroHabitacion || (r.habitacion && r.habitacion.includes(filtroHabitacion));
 
                 return coincideBuscar && coincideEstado && coincideHabitacion;
             });
@@ -328,20 +370,20 @@
             sinResultados.style.display = 'none';
 
             filtradas.forEach(function(r) {
-                var badgeClass = 'badge-info';
-                var badgeIcon = 'ℹ';
+                let badgeClass = 'badge-info';
+                let badgeIcon = 'ℹ';
                 if (r.estado === 'Confirmada') { badgeClass = 'badge-success'; badgeIcon = '✓'; }
                 else if (r.estado === 'Pendiente') { badgeClass = 'badge-warning'; badgeIcon = '⏳'; }
                 else if (r.estado === 'Cancelada') { badgeClass = 'badge-danger'; badgeIcon = '✕'; }
 
-                var fila = document.createElement('tr');
+                const fila = document.createElement('tr');
                 fila.innerHTML =
-                    '<td><strong>' + r.huesped + '</strong></td>' +
-                    '<td>' + r.cedula + '</td>' +
-                    '<td>' + r.habitacion + '</td>' +
+                    '<td><strong>' + escapeHtml(r.huesped) + '</strong></td>' +
+                    '<td>' + escapeHtml(r.cedula) + '</td>' +
+                    '<td>' + escapeHtml(r.habitacion) + '</td>' +
                     '<td>' + formatearFecha(r.checkin) + '</td>' +
                     '<td>' + formatearFecha(r.checkout) + '</td>' +
-                    '<td><span class="badge ' + badgeClass + '">' + badgeIcon + ' ' + r.estado + '</span></td>' +
+                    '<td><span class="badge ' + badgeClass + '">' + badgeIcon + ' ' + escapeHtml(r.estado) + '</span></td>' +
                     '<td style="text-align: right;">' +
                         '<button class="btn btn-icon" onclick="abrirModalEditar(' + r.id + ')" title="Editar">✎</button> ' +
                         '<button class="btn btn-icon" onclick="abrirModalEliminar(' + r.id + ')" title="Eliminar" style="background-color: var(--danger-light); color: var(--danger);">🗑</button>' +
@@ -357,8 +399,18 @@
         // ============================================
         function formatearFecha(fecha) {
             if (!fecha) return '—';
-            var partes = fecha.split('-');
+            const partes = fecha.split('-');
             return partes[2] + '/' + partes[1] + '/' + partes[0];
+        }
+
+        // ============================================
+        // ESCAPAR HTML
+        // ============================================
+        function escapeHtml(texto) {
+            if (!texto) return '';
+            const div = document.createElement('div');
+            div.textContent = texto;
+            return div.innerHTML;
         }
 
         // ============================================
@@ -366,8 +418,13 @@
         // ============================================
         function abrirModalCrear() {
             document.getElementById('modalTitulo').textContent = 'Nueva Reservación';
-            document.getElementById('formReserva').reset();
             document.getElementById('reservaId').value = '';
+            document.getElementById('inputHuesped').value = '';
+            document.getElementById('inputCedula').value = '';
+            document.getElementById('inputHabitacion').value = '';
+            document.getElementById('inputCheckin').value = '';
+            document.getElementById('inputCheckout').value = '';
+            document.getElementById('inputEstado').value = 'Pendiente';
             limpiarErrores();
             abrirModal('modalForm');
         }
@@ -376,14 +433,24 @@
         // ABRIR MODAL EDITAR
         // ============================================
         function abrirModalEditar(id) {
-            var r = reservas.find(function(x) { return x.id === id; });
+            const r = reservasCache.find(function(x) { return x.id == id; });
             if (!r) return;
 
             document.getElementById('modalTitulo').textContent = 'Editar Reservación';
             document.getElementById('reservaId').value = r.id;
             document.getElementById('inputHuesped').value = r.huesped;
             document.getElementById('inputCedula').value = r.cedula;
-            document.getElementById('inputHabitacion').value = r.habitacion;
+
+            // Buscar la opción que coincida con la habitación
+            const selectHab = document.getElementById('inputHabitacion');
+            selectHab.value = '';
+            for (let i = 0; i < selectHab.options.length; i++) {
+                if (selectHab.options[i].value === r.habitacion) {
+                    selectHab.selectedIndex = i;
+                    break;
+                }
+            }
+
             document.getElementById('inputCheckin').value = r.checkin;
             document.getElementById('inputCheckout').value = r.checkout;
             document.getElementById('inputEstado').value = r.estado;
@@ -395,10 +462,8 @@
         // ============================================
         // ABRIR MODAL ELIMINAR
         // ============================================
-        var idAEliminar = null;
-
         function abrirModalEliminar(id) {
-            var r = reservas.find(function(x) { return x.id === id; });
+            const r = reservasCache.find(function(x) { return x.id == id; });
             if (!r) return;
 
             idAEliminar = id;
@@ -407,15 +472,17 @@
         }
 
         // ============================================
-        // GUARDAR (Crear o Editar)
+        // GUARDAR (POST o PUT) — CON LISTENER AL BOTÓN
         // ============================================
-        document.getElementById('formReserva').addEventListener('submit', function(e) {
+        document.getElementById('btnGuardar').addEventListener('click', async function(e) {
             e.preventDefault();
 
             if (!validarFormulario()) return;
 
-            var id = document.getElementById('reservaId').value;
-            var datos = {
+            const id = document.getElementById('reservaId').value;
+            const btnGuardar = this;
+
+            const datos = {
                 huesped: document.getElementById('inputHuesped').value.trim(),
                 cedula: document.getElementById('inputCedula').value.trim(),
                 habitacion: document.getElementById('inputHabitacion').value,
@@ -424,34 +491,71 @@
                 estado: document.getElementById('inputEstado').value
             };
 
-            if (id) {
-                // Editar
-                var r = reservas.find(function(x) { return x.id == id; });
-                if (r) {
-                    Object.assign(r, datos);
-                }
-                showToast('success', 'Reservación actualizada', 'Los datos se guardaron correctamente.');
-            } else {
-                // Crear
-                datos.id = proximoId++;
-                reservas.push(datos);
-                showToast('success', '¡Reservación creada!', 'La nueva reserva fue registrada exitosamente.');
-            }
+            btnGuardar.disabled = true;
+            btnGuardar.textContent = '⏳ Guardando...';
 
-            cerrarModal('modalForm');
-            renderizarTabla();
+            try {
+                const url = id ? API_URL + '/' + id : API_URL;
+                const metodo = id ? 'PUT' : 'POST';
+
+                const response = await fetch(url, {
+                    method: metodo,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(datos)
+                });
+
+                const resultado = await response.json();
+
+                if (response.ok && resultado.success) {
+                    cerrarModal('modalForm');
+                    showToast('success',
+                        id ? 'Reservación actualizada' : '¡Reservación creada!',
+                        id ? 'Los datos se guardaron correctamente.' : 'La nueva reserva fue registrada.'
+                    );
+                    await cargarReservas();
+                } else {
+                    showToast('danger', 'Error al guardar', resultado.message || 'Verifique los datos.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('danger', 'Error de conexión', 'No se pudo conectar con el servidor.');
+            } finally {
+                btnGuardar.disabled = false;
+                btnGuardar.textContent = '💾 Guardar Reservación';
+            }
         });
 
         // ============================================
-        // ELIMINAR
+        // ELIMINAR (DELETE)
         // ============================================
-        document.getElementById('btnConfirmarEliminar').addEventListener('click', function() {
-            if (idAEliminar !== null) {
-                reservas = reservas.filter(function(r) { return r.id !== idAEliminar; });
-                idAEliminar = null;
-                cerrarModal('modalEliminar');
-                renderizarTabla();
-                showToast('success', 'Reservación eliminada', 'El registro fue eliminado permanentemente.');
+        document.getElementById('btnConfirmarEliminar').addEventListener('click', async function() {
+            if (idAEliminar === null) return;
+
+            const btnEliminar = this;
+            btnEliminar.disabled = true;
+            btnEliminar.textContent = '⏳ Eliminando...';
+
+            try {
+                const response = await fetch(API_URL + '/' + idAEliminar, {
+                    method: 'DELETE'
+                });
+
+                const resultado = await response.json();
+
+                if (response.ok && resultado.success) {
+                    cerrarModal('modalEliminar');
+                    idAEliminar = null;
+                    showToast('success', 'Reservación eliminada', 'El registro fue eliminado permanentemente.');
+                    await cargarReservas();
+                } else {
+                    showToast('danger', 'Error al eliminar', resultado.message || 'Intente nuevamente.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('danger', 'Error de conexión', 'No se pudo conectar con el servidor.');
+            } finally {
+                btnEliminar.disabled = false;
+                btnEliminar.textContent = 'Sí, eliminar';
             }
         });
 
@@ -460,20 +564,20 @@
         // ============================================
         function validarFormulario() {
             limpiarErrores();
-            var valido = true;
+            let valido = true;
 
-            var huesped = document.getElementById('inputHuesped');
-            var cedula = document.getElementById('inputCedula');
-            var habitacion = document.getElementById('inputHabitacion');
-            var checkin = document.getElementById('inputCheckin');
-            var checkout = document.getElementById('inputCheckout');
+            const huesped = document.getElementById('inputHuesped');
+            const cedula = document.getElementById('inputCedula');
+            const habitacion = document.getElementById('inputHabitacion');
+            const checkin = document.getElementById('inputCheckin');
+            const checkout = document.getElementById('inputCheckout');
 
             if (!huesped.value.trim()) {
                 marcarError(huesped, 'errorHuesped', 'El nombre es obligatorio.');
                 valido = false;
             }
 
-            var cedulaRegex = /^[VEJvej]-?\d{6,10}$/;
+            const cedulaRegex = /^[VEJvej]-?\d{6,10}$/;
             if (!cedula.value.trim()) {
                 marcarError(cedula, 'errorCedula', 'La cédula es obligatoria.');
                 valido = false;
@@ -495,7 +599,7 @@
             if (!checkout.value) {
                 marcarError(checkout, 'errorCheckout', 'Fecha de salida obligatoria.');
                 valido = false;
-            } else if (checkin.value && checkout.value && checkout.value < checkin.value) {
+            } else if (checkin.value && checkout.value && checkout.value <= checkin.value) {
                 marcarError(checkout, 'errorCheckout', 'Debe ser posterior al check-in.');
                 valido = false;
             }
@@ -542,11 +646,11 @@
         // TOASTS
         // ============================================
         function showToast(type, title, message) {
-            var container = document.getElementById('toastContainer');
-            var seconds = 5;
-            var icons = { success: '✓', danger: '✕', warning: '⚠', info: 'ℹ' };
+            const container = document.getElementById('toastContainer');
+            let seconds = 5;
+            const icons = { success: '✓', danger: '✕', warning: '⚠', info: 'ℹ' };
 
-            var toast = document.createElement('div');
+            const toast = document.createElement('div');
             toast.className = 'toast toast-' + type;
             toast.innerHTML =
                 '<span class="toast-icon">' + icons[type] + '</span>' +
@@ -559,8 +663,8 @@
 
             container.appendChild(toast);
 
-            var timerEl = toast.querySelector('.toast-timer');
-            var interval = setInterval(function() {
+            const timerEl = toast.querySelector('.toast-timer');
+            const interval = setInterval(function() {
                 seconds--;
                 timerEl.textContent = seconds + 's';
                 if (seconds <= 0) {
@@ -575,9 +679,9 @@
         // ============================================
         // SIDEBAR MÓVIL
         // ============================================
-        var sidebar = document.getElementById('sidebar');
-        var overlay = document.getElementById('sidebarOverlay');
-        var hamburger = document.getElementById('hamburger');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        const hamburger = document.getElementById('hamburger');
 
         hamburger.addEventListener('click', function() {
             sidebar.classList.toggle('open');
@@ -599,7 +703,9 @@
         // ============================================
         // INICIALIZAR
         // ============================================
-        renderizarTabla();
+        document.addEventListener('DOMContentLoaded', function() {
+            cargarReservas();
+        });
     </script>
 
 </body>
