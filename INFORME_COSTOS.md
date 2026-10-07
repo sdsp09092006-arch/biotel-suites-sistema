@@ -35,6 +35,7 @@ Servicios cloud y suscripciones necesarias para el desarrollo:
 | **Total C_dir** | **$9.25** | **$1.11** |
 
 **Fórmula aplicada:**
+
 C_dir = Σ Insumos Reales = $1.11
 
 
@@ -52,14 +53,12 @@ Gastos de infraestructura del taller/escritorio (prorrateado sobre 176h mensuale
 | **Total Gastos Fijos** | **$80.00** |
 
 **Tarifa operativa por hora:**
-Tarifa_Op = Gastos_Fijos / 176 h = $80.00 / 176 = $0.4545/h
 
+Tarifa_Op = Gastos_Fijos / 176 h = $80.00 / 176 = $0.4545/h
 
 **Costo total operativo para 20 h:**
 
 C_op = Tarifa_Op × Horas_Tickets = $0.4545 × 20 = $9.09
-
-
 
 ---
 
@@ -69,14 +68,13 @@ Salario base del desarrollador Full-Stack junior remoto LATAM:
 
 | Parámetro | Valor |
 |-----------|-------|
-| Sueldo mensual de referencia | $300.00 USD |
+| Sueldo mensual de referencia | $350.00 USD |
 | Base mensual | 176 h |
-| **Tarifa MO por hora** | **$1.7045/h** |
+| **Tarifa MO por hora** | **$1.9886/h** |
 
 **Costo total de mano de obra para 20 h:**
 
-C_labor = Tarifa_MO × Horas_Tickets = $1.7045 × 20 = $34.09
-
+C_labor = Tarifa_MO × Horas_Tickets = $1.9886 × 20 = $39.77
 
 ---
 
@@ -96,11 +94,9 @@ Amortización de equipos de desarrollo (vida útil 2-3 años):
 
 Tarifa_Inv = Presupuesto_Año / 2112 h = $566.67 / 2112 = $0.2683/h
 
-
 **Costo total de inversión para 20 h:**
 
 C_inv = Tarifa_Inv × Horas_Tickets = $0.2683 × 20 = $5.37
-
 
 ---
 
@@ -109,13 +105,18 @@ C_inv = Tarifa_Inv × Horas_Tickets = $0.2683 × 20 = $5.37
 Factor del 20% sobre el subtotal acumulado (cubre imprevistos, code reviews, refactoring):
 
 **Subtotal acumulado:**
-C_dir + C_op + C_labor + C_inv = $1.11 + $9.09 + $34.09 + $5.37 = $49.66
 
+C_dir + C_op + C_labor + C_inv = $1.11 + $9.09 + $39.77 + $5.37 = $55.34
 
 **Desgaste:**
 
-C_desgaste = Subtotal × 0.20 = $49.66 × 0.20 = $9.93
+C_desgaste = Subtotal × 0.20 = $55.34 × 0.20 = $11.07
 
+---
+
+### PASO 6: Costo Total Consolidado (CTC)
+
+**Punto de equilibrio técnico:**
 
 ---
 
@@ -124,11 +125,10 @@ C_desgaste = Subtotal × 0.20 = $49.66 × 0.20 = $9.93
 **Punto de equilibrio técnico:**
 
 CTC = C_dir + C_op + C_labor + C_inv + C_desgaste
-CTC = $1.11 + $9.09 + $34.09 + $5.37 + $9.93
-CTC = $59.59
+CTC = $1.11 + $9.09 + $39.77 + $5.37 + $11.07
+CTC = $66.41
 
-
-**Costo Total Consolidado: $59.59 USD**
+**Costo Total Consolidado: $66.41 USD**
 
 ---
 
@@ -138,11 +138,11 @@ Fijación de los 3 niveles de precio comercial con margen:
 
 | Nivel | Fórmula | Precio |
 |-------|---------|--------|
-| **Piso Mínimo** | CTC × 1.30 | **$77.47** |
-| **Precio Estándar** | CTC × 1.45 | **$86.41** |
-| **Techo Empresarial** | CTC × 1.70 | **$101.30** |
+| **Piso Mínimo** | CTC × 1.30 | **$86.33** |
+| **Precio Estándar** | CTC × 1.45 | **$96.29** |
+| **Techo Empresarial** | CTC × 1.70 | **$112.90** |
 
-**Rango de precio recomendado:** **$77.47 – $101.30 USD**
+**Rango de precio recomendado:** **$86.33 – $112.90 USD**
 
 ---
 
@@ -152,17 +152,17 @@ Verificación de coherencia entre el tablero Kanban y el informe económico:
 
 | Ticket ID | Descripción | Rama GitFlow / PR | Horas Reales | Costo MO |
 |-----------|-------------|-------------------|--------------|----------|
-| TASK-101 | Diseño DDL, migraciones y conexión DB | feature/101-ddl-db (PR #01) | 5.0 h | 5.0 × $1.7045 = $8.52 |
-| TASK-102 | Controladores y rutas API REST CRUD | feature/102-api-crud (PR #02) | 4.0 h | 4.0 × $1.7045 = $6.82 |
-| TASK-103 | Vistas frontend, consumo fetch | feature/103-vistas-ui (PR #03) | 4.0 h | 4.0 × $1.7045 = $6.82 |
-| TASK-104 | Validaciones y manejo de errores | feature/104-validaciones (PR #04) | 3.0 h | 3.0 × $1.7045 = $5.11 |
-| TASK-105 | Pruebas de integración y despliegue local | feature/105-pruebas (PR #05) | 4.0 h | 4.0 × $1.7045 = $6.82 |
-| **TOTAL** | **5 tickets** | **5 PRs mergeados** | **20.0 h** | **$34.09** |
+| TASK-101 | Diseño DDL, migraciones y conexión DB | feature/101-ddl-db (PR #01) | 5.0 h | 5.0 × $1.9886 = $9.94 |
+| TASK-102 | Controladores y rutas API REST CRUD | feature/102-api-crud (PR #02) | 4.0 h | 4.0 × $1.9886 = $7.95 |
+| TASK-103 | Vistas frontend, consumo fetch | feature/103-vistas-ui (PR #03) | 4.0 h | 4.0 × $1.9886 = $7.95 |
+| TASK-104 | Validaciones y manejo de errores | feature/104-validaciones (PR #04) | 3.0 h | 3.0 × $1.9886 = $5.97 |
+| TASK-105 | Pruebas de integración y despliegue local | feature/105-pruebas (PR #05) | 4.0 h | 4.0 × $1.9886 = $7.95 |
+| **TOTAL** | **5 tickets** | **5 PRs mergeados** | **20.0 h** | **$39.77** |
 
 ✅ **CONCILIACIÓN PERFECTA:**
 - Total horas Kanban = 20.0 h
 - Total horas Informe = 20.0 h
-- Total MO = $34.09
+- Total MO = $39.77
 
 ---
 
@@ -172,21 +172,21 @@ Verificación de coherencia entre el tablero Kanban y el informe económico:
 |----------|-----------|
 | Insumos Digitales (C_dir) | $1.11 |
 | Costos Operativos (C_op) | $9.09 |
-| Mano de Obra (C_labor) | $34.09 |
+| Mano de Obra (C_labor) | $39.77 |
 | Inversión Hardware (C_inv) | $5.37 |
-| Desgaste 20% (C_desgaste) | $9.93 |
-| **COSTO TOTAL CONSOLIDADO (CTC)** | **$59.59** |
-| Piso Mínimo (+30%) | $77.47 |
-| Precio Estándar (+45%) | $86.41 |
-| Techo Empresarial (+70%) | $101.30 |
+| Desgaste 20% (C_desgaste) | $11.07 |
+| **COSTO TOTAL CONSOLIDADO (CTC)** | **$66.41** |
+| Piso Mínimo (+30%) | $86.33 |
+| Precio Estándar (+45%) | $96.29 |
+| Techo Empresarial (+70%) | $112.90 |
 
 ---
 
 ## 🎯 Conclusión
 
-El módulo CRUD de Reservaciones para Biotel Suites tiene un **Costo Total Consolidado de manufactura de $59.59 USD**, basado en 20 horas reales registradas en el tablero Kanban.
+El módulo CRUD de Reservaciones para Biotel Suites tiene un **Costo Total Consolidado de manufactura de $66.41 USD**, basado en 20 horas reales registradas en el tablero Kanban.
 
-El precio comercial recomendado oscila entre **$77.47 y $101.30 USD**, dependiendo del margen de ganancia aplicado.
+El precio comercial recomendado oscila entre **$86.33 y $112.90 USD**, dependiendo del margen de ganancia aplicado.
 
 ---
 
