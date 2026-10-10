@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Habitaciones — Biotel Suites</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <aside class="sidebar" id="sidebar">
+            <a href="dashboard.html" class="sidebar-brand">
+                <span class="sidebar-logo">BS</span><span>Biotel Suites</span>
+            </a>
+            <nav class="sidebar-nav">
+                <div class="nav-label">Principal</div>
+                <a href="dashboard.html" class="nav-link"><span>📊</span> <span>Dashboard</span></a>
+                <a href="Reservacion.html" class="nav-link"><span>🧾</span> <span>Reservaciones</span></a>
+                <a href="habitaciones.html" class="nav-link active"><span>🛏️</span> <span>Habitaciones</span></a>
+                <a href="clientes.html" class="nav-link"><span>👥</span> <span>Huéspedes</span></a>
+
+                <div class="nav-label">Sistema</div>
+                <a href="sistema_diseno.html" class="nav-link"><span>🎨</span> <span>Sistema de Diseño</span></a>
+                <a href="javascript:void(0);" onclick="cerrarSesion()" class="nav-link"><span>🚪</span> <span>Cerrar Sesión</span></a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="sidebar-avatar" id="sidebarAvatar">--</div>
+                <div>
+                    <div style="font-weight:600;color:white;" id="sidebarNombre">Cargando...</div>
+                    <div style="font-size:.75rem;" id="sidebarRol">--</div>
+                </div>
+            </div>
+        </aside>
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <div class="main-content">
+            <header class="topbar">
+                <div style="display:flex;align-items:center;gap:1rem;">
+                    <button class="hamburger" id="hamburger">☰</button>
+                    <h1 class="topbar-title">Gestión de Habitaciones</h1>
+                </div>
+                <div class="topbar-user">
+                    <div class="topbar-user-info">
+                        <div class="topbar-user-name" id="topbarNombre">Cargando...</div>
+                        <div class="topbar-user-role" id="topbarRol">--</div>
+                    </div>
+                    <div class="sidebar-avatar" id="topbarAvatar" style="width:42px;height:42px;font-size:.9rem;">--</div>
+                </div>
+            </header>
+
+            <main class="content">
+                <div class="page-header">
+                    <div>
+                        <h1>Habitaciones</h1>
+                        <p>Administre el inventario y estado de las habitaciones</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="abrirModalCrear()">
+                        <span>＋</span> Nueva Habitación
+                    </button>
+                </div>
+
+                <div class="toolbar">
+                    <div class="search-box">
+                        <div class="input-group">
+                            <span class="input-icon">🔍</span>
+                            <input type="text" id="buscador" class="form-control" placeholder="Buscar por número o tipo...">
+                        </div>
+                    </div>
+                    <select id="filtroTipo" class="form-select" style="max-width:220px;">
+                        <option value="">Todos los tipos</option>
+                        <option value="Suite Deluxe">Suite Deluxe</option>
+                        <option value="Suite Ejecutiva">Suite Ejecutiva</option>
+                        <option value="Suite Presidencial">Suite Presidencial</option>
+                        <option value="Suite Junior">Suite Junior</option>
+                        <option value="Doble Estándar">Doble Estándar</option>
+                        <option value="Familiar">Familiar</option>
+                    </select>
+                    <select id="filtroEstado" class="form-select" style="max-width:180px;">
+                        <option value="">Todos los estados</option>
+                        <option value="Disponible">Disponible</option>
+                        <option value="Ocupada">Ocupada</option>
+                        <option value="Mantenimiento">Mantenimiento</option>
+                    </select>
+                </div>
+
+                <div id="loadingState" style="text-align:center;padding:4rem 1rem;display:none;">
+                    <div style="font-size:3rem;margin-bottom:1rem;">⏳</div>
+                    <p style="color:var(--gray-500);">Cargando habitaciones...</p>
+                </div>
+
+                <div id="errorState" style="text-align:center;padding:4rem 1rem;display:none;">
+                    <div style="font-size:3rem;margin-bottom:1rem;">⚠️</div>
+                    <p style="color:var(--danger);font-weight:600;">Error de conexión</p>
+                    <p id="errorMessage" style="color:var(--gray-500);margin-bottom:1rem;"></p>
+                    <button class="btn btn-primary" onclick="cargarHabitaciones()">🔄 Reintentar</button>
+                </div>
+
+                <div class="table-wrapper" id="tablaWrapper" style="display:none;">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Nº</th>
+                                <th>Tipo</th>
+                                <th>Piso</th>
+                                <th>Capacidad</th>
+                                <th>Camas</th>
+                                <th>Precio/Noche</th>
+                                <th>Estado</th>
+                                <th style="text-align:right;">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyHabitaciones"></tbody>
+                    </table>
+                </div>
+
+                <div id="sinResultados" style="text-align:center;padding:3rem 1rem;color:var(--gray-500);display:none;">
+                    <div style="font-size:3rem;margin-bottom:.5rem;">🔍</div>
+                    <p>No se encontraron habitaciones con esos filtros.</p>
+                </div>
+
+                <div style="margin-top:1rem;text-align:right;color:var(--gray-500);font-size:.85rem;">
+                    Total: <strong id="contadorFilas">0</strong> habitación(es)
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- MODAL CREAR/EDITAR -->
+    <div class="modal-overlay" id="modalForm">
+        <div class="modal" style="max-width:640px;">
+            <div class="modal-header">
+                <h3 id="modalTitulo">Nueva Habitación</h3>
+                <button class="modal-close" onclick="cerrarModal('modalForm')">×</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="habitacionId" value="">
+
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;">
+                    <div class="form-group">
+                        <label class="form-label">Número <span class="required">*</span></label>
+                        <input type="text" id="inputNumero" class="form-control" placeholder="101">
+                        <span class="form-error" id="errorNumero"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Piso</label>
+                        <input type="number" id="inputPiso" class="form-control" value="1" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Estado</label>
+                        <select id="inputEstado" class="form-select">
+                            <option value="Disponible">Disponible</option>
+                            <option value="Ocupada">Ocupada</option>
+                            <option value="Mantenimiento">Mantenimiento</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Tipo de habitación <span class="required">*</span></label>
+                    <select id="inputTipo" class="form-select">
+                        <option value="">Seleccione un tipo...</option>
+                        <option value="Suite Deluxe">Suite Deluxe</option>
+                        <option value="Suite Ejecutiva">Suite Ejecutiva</option>
+                        <option value="Suite Presidencial">Suite Presidencial</option>
+                        <option value="Suite Junior">Suite Junior</option>
+                        <option value="Doble Estándar">Doble Estándar</option>
+                        <option value="Familiar">Familiar</option>
+                    </select>
+                    <span class="form-error" id="errorTipo"></span>
+                </div>
+
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;">
+                    <div class="form-group">
+                        <label class="form-label">Capacidad <span class="required">*</span></label>
+                        <input type="number" id="inputCapacidad" class="form-control" value="2" min="1" max="10">
+                        <span class="form-error" id="errorCapacidad"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Camas</label>
+                        <input type="number" id="inputCamas" class="form-control" value="1" min="1" max="6">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Precio/Noche ($) <span class="required">*</span></label>
+                        <input type="number" id="inputPrecio" class="form-control" step="0.01" min="0" placeholder="120.00">
+                        <span class="form-error" id="errorPrecio"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Descripción</label>
+                    <textarea id="inputDescripcion" class="form-control" rows="2" placeholder="Vista al jardín, balcón privado..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Amenidades <small class="text-muted">(separadas por coma)</small></label>
+                    <input type="text" id="inputAmenidades" class="form-control" placeholder="WiFi, A/C, TV, Minibar">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="cerrarModal('modalForm')">Cancelar</button>
+                <button class="btn btn-primary" id="btnGuardar">💾 Guardar Habitación</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL ELIMINAR -->
+    <div class="modal-overlay" id="modalEliminar">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>🗑 Confirmar Eliminación</h3>
+                <button class="modal-close" onclick="cerrarModal('modalEliminar')">×</button>
+            </div>
+            <div class="modal-body">
+                <p><strong>¿Está seguro de eliminar esta habitación?</strong></p>
+                <p class="text-muted" style="font-size:.9rem;">Habitación: <strong id="eliminarNombre">—</strong></p>
+                <p class="text-muted" style="font-size:.85rem;">No se puede eliminar si tiene reservas activas.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="cerrarModal('modalEliminar')">Cancelar</button>
+                <button class="btn btn-danger" id="btnConfirmarEliminar">Sí, eliminar</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        const API_URL = 'http://localhost/biotel-suites-sistema/api/habitaciones';
+        const API_AUTH = 'http://localhost/biotel-suites-sistema/api';
+        let habitacionesCache = [];
+        let idAEliminar = null;
+
+        // ============================================
+        // CARGAR DATOS DEL USUARIO
+        // ============================================
+        async function cargarDatosUsuario() {
+            try {
+                const res = await fetch(API_AUTH + '/auth/me');
+                const data = await res.json();
+                if (!data.success) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+                const usuario = data.usuario;
+                const iniciales = usuario.nombre.split(' ').slice(0, 2).map(p => p.charAt(0).toUpperCase()).join('');
+                
+                const sidebarAvatar = document.getElementById('sidebarAvatar');
+                const sidebarNombre = document.getElementById('sidebarNombre');
+                const sidebarRol = document.getElementById('sidebarRol');
+                if (sidebarAvatar) sidebarAvatar.textContent = iniciales;
+                if (sidebarNombre) sidebarNombre.textContent = usuario.nombre;
+                if (sidebarRol) sidebarRol.textContent = usuario.rol;
+                
+                const topbarNombre = document.getElementById('topbarNombre');
+                const topbarRol = document.getElementById('topbarRol');
+                const topbarAvatar = document.getElementById('topbarAvatar');
+                if (topbarNombre) topbarNombre.textContent = usuario.nombre;
+                if (topbarRol) topbarRol.textContent = usuario.rol;
+                if (topbarAvatar) topbarAvatar.textContent = iniciales;
+            } catch (error) {
+                window.location.href = 'login.html';
+            }
+        }
+
+        // ============================================
+        // CERRAR SESIÓN
+        // ============================================
+        async function cerrarSesion() {
+            try {
+                await fetch(API_AUTH + '/auth/logout', { method: 'POST' });
+            } catch (e) { console.error(e); }
+            window.location.href = 'login.html';
+        }
+
+        function normalizar(t) {
+            return t.toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/ñ/g, 'n').trim();
+        }
+        function mostrarLoading() {
+            document.getElementById('loadingState').style.display = 'block';
+            document.getElementById('tablaWrapper').style.display = 'none';
+            document.getElementById('sinResultados').style.display = 'none';
+            document.getElementById('errorState').style.display = 'none';
+        }
+        function mostrarTabla() {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('tablaWrapper').style.display = 'block';
+            document.getElementById('errorState').style.display = 'none';
+        }
+        function mostrarError(msg) {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('tablaWrapper').style.display = 'none';
+            document.getElementById('sinResultados').style.display = 'none';
+            document.getElementById('errorState').style.display = 'block';
+            document.getElementById('errorMessage').textContent = msg;
+        }
+
+        async function cargarHabitaciones() {
+            mostrarLoading();
+            try {
+                const res = await fetch(API_URL);
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                const data = await res.json();
+                if (data.success) {
+                    habitacionesCache = data.data;
+                    renderizarTabla();
+                    mostrarTabla();
+                } else {
+                    throw new Error(data.message || 'Error al cargar');
+                }
+            } catch (e) {
+                console.error(e);
+                mostrarError('No se pudieron cargar las habitaciones.');
+                showToast('danger', 'Error de conexión', 'No se pudo conectar con el servidor.');
+            }
+        }
+
+        function renderizarTabla() {
+            const tbody = document.getElementById('tbodyHabitaciones');
+            const buscar = normalizar(document.getElementById('buscador').value.trim());
+            const filtroTipo = document.getElementById('filtroTipo').value;
+            const filtroEstado = document.getElementById('filtroEstado').value;
+
+            const filtrados = habitacionesCache.filter(h => {
+                const coincide = !buscar ||
+                    normalizar(h.numero || '').includes(buscar) ||
+                    normalizar(h.tipo || '').includes(buscar);
+                const coincideTipo = !filtroTipo || h.tipo === filtroTipo;
+                const coincideEstado = !filtroEstado || h.estado === filtroEstado;
+                return coincide && coincideTipo && coincideEstado;
+            });
+
+            tbody.innerHTML = '';
+            const sinRes = document.getElementById('sinResultados');
+            if (filtrados.length === 0) {
+                sinRes.style.display = 'block';
+                document.getElementById('contadorFilas').textContent = '0';
+                return;
+            }
+            sinRes.style.display = 'none';
+
+            filtrados.forEach(h => {
+                let badgeClass = 'badge-success', icon = '✓';
+                if (h.estado === 'Ocupada') { badgeClass = 'badge-danger'; icon = '✕'; }
+                else if (h.estado === 'Mantenimiento') { badgeClass = 'badge-warning'; icon = '⚠'; }
+
+                const tr = document.createElement('tr');
+                tr.innerHTML =
+                    '<td><strong>' + escapeHtml(h.numero) + '</strong></td>' +
+                    '<td>' + escapeHtml(h.tipo) + '</td>' +
+                    '<td>' + escapeHtml(h.piso || '—') + '</td>' +
+                    '<td>👤 ' + h.capacidad + '</td>' +
+                    '<td>🛏 ' + h.camas + '</td>' +
+                    '<td><strong>$' + parseFloat(h.precio_noche).toFixed(2) + '</strong></td>' +
+                    '<td><span class="badge ' + badgeClass + '">' + icon + ' ' + escapeHtml(h.estado) + '</span></td>' +
+                    '<td style="text-align:right;">' +
+                        '<button class="btn btn-icon" onclick="abrirModalEditar(' + h.id + ')">✎</button> ' +
+                        '<button class="btn btn-icon" onclick="abrirModalEliminar(' + h.id + ')" style="background-color:var(--danger-light);color:var(--danger);">🗑</button>' +
+                    '</td>';
+                tbody.appendChild(tr);
+            });
+            document.getElementById('contadorFilas').textContent = filtrados.length;
+        }
+
+        function escapeHtml(t) {
+            if (!t) return '';
+            const d = document.createElement('div');
+            d.textContent = t;
+            return d.innerHTML;
+        }
+
+        function abrirModalCrear() {
+            document.getElementById('modalTitulo').textContent = 'Nueva Habitación';
+            document.getElementById('habitacionId').value = '';
+            ['inputNumero','inputPrecio','inputDescripcion','inputAmenidades'].forEach(id => document.getElementById(id).value = '');
+            document.getElementById('inputTipo').value = '';
+            document.getElementById('inputCapacidad').value = '2';
+            document.getElementById('inputCamas').value = '1';
+            document.getElementById('inputPiso').value = '1';
+            document.getElementById('inputEstado').value = 'Disponible';
+            limpiarErrores();
+            abrirModal('modalForm');
+        }
+
+        function abrirModalEditar(id) {
+            const h = habitacionesCache.find(x => x.id == id);
+            if (!h) return;
+            document.getElementById('modalTitulo').textContent = 'Editar Habitación';
+            document.getElementById('habitacionId').value = h.id;
+            document.getElementById('inputNumero').value = h.numero || '';
+            document.getElementById('inputTipo').value = h.tipo || '';
+            document.getElementById('inputCapacidad').value = h.capacidad || 2;
+            document.getElementById('inputCamas').value = h.camas || 1;
+            document.getElementById('inputPiso').value = h.piso || 1;
+            document.getElementById('inputPrecio').value = h.precio_noche || '';
+            document.getElementById('inputEstado').value = h.estado || 'Disponible';
+            document.getElementById('inputDescripcion').value = h.descripcion || '';
+            document.getElementById('inputAmenidades').value = h.amenidades || '';
+            limpiarErrores();
+            abrirModal('modalForm');
+        }
+
+        function abrirModalEliminar(id) {
+            const h = habitacionesCache.find(x => x.id == id);
+            if (!h) return;
+            idAEliminar = id;
+            document.getElementById('eliminarNombre').textContent = 'Nº ' + h.numero + ' — ' + h.tipo;
+            abrirModal('modalEliminar');
+        }
+
+        document.getElementById('btnGuardar').addEventListener('click', async function() {
+            if (!validarFormulario()) return;
+            const id = document.getElementById('habitacionId').value;
+            const btn = this;
+            const datos = {
+                numero: document.getElementById('inputNumero').value.trim(),
+                tipo: document.getElementById('inputTipo').value,
+                capacidad: parseInt(document.getElementById('inputCapacidad').value),
+                camas: parseInt(document.getElementById('inputCamas').value),
+                piso: parseInt(document.getElementById('inputPiso').value),
+                precio_noche: parseFloat(document.getElementById('inputPrecio').value),
+                estado: document.getElementById('inputEstado').value,
+                descripcion: document.getElementById('inputDescripcion').value.trim(),
+                amenidades: document.getElementById('inputAmenidades').value.trim()
+            };
+
+            btn.disabled = true;
+            btn.textContent = '⏳ Guardando...';
+            try {
+                const url = id ? API_URL + '/' + id : API_URL;
+                const metodo = id ? 'PUT' : 'POST';
+                const res = await fetch(url, {
+                    method: metodo,
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(datos)
+                });
+                const resultado = await res.json();
+                if (res.ok && resultado.success) {
+                    cerrarModal('modalForm');
+                    showToast('success',
+                        id ? 'Habitación actualizada' : '¡Habitación creada!',
+                        'Los datos se guardaron correctamente.');
+                    await cargarHabitaciones();
+                } else {
+                    showToast('danger', 'Error al guardar', resultado.message || 'Verifique los datos.');
+                }
+            } catch (e) {
+                showToast('danger', 'Error de conexión', 'No se pudo conectar.');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '💾 Guardar Habitación';
+            }
+        });
+
+        document.getElementById('btnConfirmarEliminar').addEventListener('click', async function() {
+            if (idAEliminar === null) return;
+            const btn = this;
+            btn.disabled = true;
+            btn.textContent = '⏳ Eliminando...';
+            try {
+                const res = await fetch(API_URL + '/' + idAEliminar, {method: 'DELETE'});
+                const resultado = await res.json();
+                if (res.ok && resultado.success) {
+                    cerrarModal('modalEliminar');
+                    idAEliminar = null;
+                    showToast('success', 'Habitación eliminada', 'El registro fue desactivado.');
+                    await cargarHabitaciones();
+                } else {
+                    showToast('danger', 'No se puede eliminar', resultado.message || 'Intente nuevamente.');
+                }
+            } catch (e) {
+                showToast('danger', 'Error de conexión', 'No se pudo conectar.');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Sí, eliminar';
+            }
+        });
+
+        function validarFormulario() {
+            limpiarErrores();
+            let valido = true;
+            const numero = document.getElementById('inputNumero');
+            const tipo = document.getElementById('inputTipo');
+            const capacidad = document.getElementById('inputCapacidad');
+            const precio = document.getElementById('inputPrecio');
+
+            if (!numero.value.trim()) {
+                marcarError(numero, 'errorNumero', 'El número es obligatorio.');
+                valido = false;
+            }
+            if (!tipo.value) {
+                marcarError(tipo, 'errorTipo', 'Seleccione un tipo.');
+                valido = false;
+            }
+            if (!capacidad.value || parseInt(capacidad.value) < 1) {
+                marcarError(capacidad, 'errorCapacidad', 'Capacidad mínima 1.');
+                valido = false;
+            }
+            if (!precio.value || parseFloat(precio.value) <= 0) {
+                marcarError(precio, 'errorPrecio', 'Precio debe ser mayor a 0.');
+                valido = false;
+            }
+            if (!valido) showToast('danger', 'Error al guardar', 'Verifique los campos marcados.');
+            return valido;
+        }
+
+        function marcarError(input, id, msg) {
+            input.classList.add('error');
+            document.getElementById(id).textContent = '⚠ ' + msg;
+        }
+        function limpiarErrores() {
+            document.querySelectorAll('.form-control, .form-select').forEach(el => el.classList.remove('error'));
+            document.querySelectorAll('.form-error').forEach(el => el.textContent = '');
+        }
+
+        function abrirModal(id) { document.getElementById(id).classList.add('active'); }
+        function cerrarModal(id) { document.getElementById(id).classList.remove('active'); }
+        document.querySelectorAll('.modal-overlay').forEach(ov => {
+            ov.addEventListener('click', function(e) { if (e.target === this) this.classList.remove('active'); });
+        });
+
+        function showToast(type, title, message) {
+            const container = document.getElementById('toastContainer');
+            let seconds = 5;
+            const icons = { success:'✓', danger:'✕', warning:'⚠', info:'ℹ' };
+            const toast = document.createElement('div');
+            toast.className = 'toast toast-' + type;
+            toast.innerHTML =
+                '<span class="toast-icon">' + icons[type] + '</span>' +
+                '<div class="toast-content">' +
+                    '<div class="toast-title">' + title + '</div>' +
+                    '<p class="toast-message">' + message + '</p>' +
+                '</div>' +
+                '<button class="toast-close" onclick="this.parentElement.remove()">×</button>' +
+                '<span class="toast-timer">' + seconds + 's</span>';
+            container.appendChild(toast);
+            const timerEl = toast.querySelector('.toast-timer');
+            const interval = setInterval(() => {
+                seconds--;
+                timerEl.textContent = seconds + 's';
+                if (seconds <= 0) {
+                    clearInterval(interval);
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateX(120%)';
+                    setTimeout(() => toast.remove(), 300);
+                }
+            }, 1000);
+        }
+
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        document.getElementById('hamburger').addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        });
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('active');
+        });
+
+        document.getElementById('buscador').addEventListener('input', renderizarTabla);
+        document.getElementById('filtroTipo').addEventListener('change', renderizarTabla);
+        document.getElementById('filtroEstado').addEventListener('change', renderizarTabla);
+
+        document.addEventListener('DOMContentLoaded', function() {
+            cargarDatosUsuario();
+            cargarHabitaciones();
+        });
+    </script>
+</body>
+</html>

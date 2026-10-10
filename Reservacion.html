@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservaciones — Biotel Suites</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="dashboard-layout">
+
+        <!-- ============================================ -->
+        <!-- SIDEBAR -->
+        <!-- ============================================ -->
+        <aside class="sidebar" id="sidebar">
+            <a href="dashboard.html" class="sidebar-brand">
+                <span class="sidebar-logo">BS</span>
+                <span>Biotel Suites</span>
+            </a>
+
+            <nav class="sidebar-nav">
+                <div class="nav-label">Principal</div>
+                <a href="dashboard.html" class="nav-link"><span>📊</span> <span>Dashboard</span></a>
+                <a href="Reservacion.html" class="nav-link active"><span>🧾</span> <span>Reservaciones</span></a>
+                <a href="habitaciones.html" class="nav-link"><span>🛏️</span> <span>Habitaciones</span></a>
+                <a href="clientes.html" class="nav-link"><span>👥</span> <span>Huéspedes</span></a>
+
+                <div class="nav-label">Sistema</div>
+                <a href="sistema_diseno.html" class="nav-link"><span>🎨</span> <span>Sistema de Diseño</span></a>
+                <a href="javascript:void(0);" onclick="cerrarSesion()" class="nav-link"><span>🚪</span> <span>Cerrar Sesión</span></a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-avatar" id="sidebarAvatar">--</div>
+                <div>
+                    <div style="font-weight: 600; color: white;" id="sidebarNombre">Cargando...</div>
+                    <div style="font-size: 0.75rem;" id="sidebarRol">--</div>
+                </div>
+            </div>
+        </aside>
+
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- ============================================ -->
+        <!-- MAIN CONTENT -->
+        <!-- ============================================ -->
+        <div class="main-content">
+
+            <header class="topbar">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <button class="hamburger" id="hamburger" aria-label="Menú">☰</button>
+                    <h1 class="topbar-title">Gestión de Reservaciones</h1>
+                </div>
+                <div class="topbar-user">
+                    <div class="topbar-user-info">
+                        <div class="topbar-user-name" id="topbarNombre">Cargando...</div>
+                        <div class="topbar-user-role" id="topbarRol">--</div>
+                    </div>
+                    <div class="sidebar-avatar" id="topbarAvatar" style="width: 42px; height: 42px; font-size: 0.9rem;">--</div>
+                </div>
+            </header>
+
+            <main class="content">
+
+                <div class="page-header">
+                    <div>
+                        <h1>Reservaciones</h1>
+                        <p>Gestione las reservas activas del hotel</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="abrirModalCrear()">
+                        <span>＋</span> Nueva Reservación
+                    </button>
+                </div>
+
+                <div class="toolbar">
+                    <div class="search-box">
+                        <div class="input-group">
+                            <span class="input-icon">🔍</span>
+                            <input type="text" id="buscador" class="form-control" placeholder="Buscar por huésped, habitación o cédula...">
+                        </div>
+                    </div>
+                    <select id="filtroEstado" class="form-select" style="max-width: 200px;">
+                        <option value="">Todos los estados</option>
+                        <option value="Confirmada">Confirmada</option>
+                        <option value="Pendiente">Pendiente</option>
+                        <option value="Cancelada">Cancelada</option>
+                        <option value="Por verificar">Por verificar</option>
+                    </select>
+                    <select id="filtroHabitacion" class="form-select" style="max-width: 200px;">
+                        <option value="">Todas las habitaciones</option>
+                        <option value="Suite Deluxe">Suite Deluxe</option>
+                        <option value="Ejecutiva">Ejecutiva</option>
+                        <option value="Doble Estándar">Doble Estándar</option>
+                        <option value="Suite Presidencial">Suite Presidencial</option>
+                    </select>
+                </div>
+
+                <div id="loadingState" style="text-align: center; padding: 4rem 1rem; display: none;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">⏳</div>
+                    <p style="color: var(--gray-500);">Cargando reservaciones...</p>
+                </div>
+
+                <div id="errorState" style="text-align: center; padding: 4rem 1rem; display: none;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">⚠️</div>
+                    <p style="color: var(--danger); font-weight: 600;">Error de conexión</p>
+                    <p id="errorMessage" style="color: var(--gray-500); margin-bottom: 1rem;"></p>
+                    <button class="btn btn-primary" onclick="cargarReservas()">🔄 Reintentar</button>
+                </div>
+
+                <div class="table-wrapper" id="tablaWrapper" style="display: none;">
+                    <table class="table" id="tablaReservas">
+                        <thead>
+                            <tr>
+                                <th>Huésped</th>
+                                <th>Cédula</th>
+                                <th>Habitación</th>
+                                <th>Check-in</th>
+                                <th>Check-out</th>
+                                <th>Estado</th>
+                                <th style="text-align: right;">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyReservas"></tbody>
+                    </table>
+                </div>
+
+                <div id="sinResultados" style="text-align: center; padding: 3rem 1rem; color: var(--gray-500); display: none;">
+                    <div style="font-size: 3rem; margin-bottom: 0.5rem;">🔍</div>
+                    <p>No se encontraron reservaciones con esos filtros.</p>
+                </div>
+
+                <div style="margin-top: 1rem; text-align: right; color: var(--gray-500); font-size: 0.85rem;">
+                    Total: <strong id="contadorFilas">0</strong> reservación(es)
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- MODAL: CREAR / EDITAR RESERVA -->
+    <div class="modal-overlay" id="modalForm">
+        <div class="modal" style="max-width: 560px;">
+            <div class="modal-header">
+                <h3 id="modalTitulo">Nueva Reservación</h3>
+                <button class="modal-close" onclick="cerrarModal('modalForm')">×</button>
+            </div>
+
+            <div class="modal-body">
+                <input type="hidden" id="reservaId" value="">
+
+                <div class="form-group">
+                    <label class="form-label" for="inputHuesped">Nombre del huésped <span class="required">*</span></label>
+                    <input type="text" id="inputHuesped" class="form-control" placeholder="Ej: María Delgado">
+                    <span class="form-error" id="errorHuesped"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="inputCedula">Cédula / RIF <span class="required">*</span></label>
+                    <input type="text" id="inputCedula" class="form-control" placeholder="Ej: V-12345678">
+                    <span class="form-error" id="errorCedula"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="inputHabitacion">Habitación <span class="required">*</span></label>
+                    <select id="inputHabitacion" class="form-select">
+                        <option value="">Seleccione una habitación...</option>
+                        <option value="101 - Suite Deluxe">101 - Suite Deluxe</option>
+                        <option value="102 - Suite Ejecutiva">102 - Suite Ejecutiva</option>
+                        <option value="103 - Doble Estándar">103 - Doble Estándar</option>
+                        <option value="104 - Suite Presidencial">104 - Suite Presidencial</option>
+                        <option value="205 - Suite Ejecutiva">205 - Suite Ejecutiva</option>
+                        <option value="312 - Doble Estándar">312 - Doble Estándar</option>
+                    </select>
+                    <span class="form-error" id="errorHabitacion"></span>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label class="form-label" for="inputCheckin">Check-in <span class="required">*</span></label>
+                        <input type="date" id="inputCheckin" class="form-control">
+                        <span class="form-error" id="errorCheckin"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="inputCheckout">Check-out <span class="required">*</span></label>
+                        <input type="date" id="inputCheckout" class="form-control">
+                        <span class="form-error" id="errorCheckout"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="inputEstado">Estado de la reserva</label>
+                    <select id="inputEstado" class="form-select">
+                        <option value="Pendiente">Pendiente</option>
+                        <option value="Confirmada">Confirmada</option>
+                        <option value="Por verificar">Por verificar</option>
+                        <option value="Cancelada">Cancelada</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" onclick="cerrarModal('modalForm')">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="btnGuardar">💾 Guardar Reservación</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: CONFIRMAR ELIMINACIÓN -->
+    <div class="modal-overlay" id="modalEliminar">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>🗑 Confirmar Eliminación</h3>
+                <button class="modal-close" onclick="cerrarModal('modalEliminar')">×</button>
+            </div>
+            <div class="modal-body">
+                <p><strong>¿Está seguro de eliminar esta reservación?</strong></p>
+                <p class="text-muted" style="font-size: 0.9rem;">Huésped: <strong id="eliminarNombre">—</strong></p>
+                <p class="text-muted" style="font-size: 0.85rem;">Esta acción no se puede deshacer.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="cerrarModal('modalEliminar')">Cancelar</button>
+                <button class="btn btn-danger" id="btnConfirmarEliminar">Sí, eliminar</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        const API_URL = 'http://localhost/biotel-suites-sistema/api/reservas';
+        const API_AUTH = 'http://localhost/biotel-suites-sistema/api';
+        let reservasCache = [];
+        let idAEliminar = null;
+
+        // ============================================
+        // CARGAR DATOS DEL USUARIO
+        // ============================================
+        async function cargarDatosUsuario() {
+            try {
+                const res = await fetch(API_AUTH + '/auth/me');
+                const data = await res.json();
+                if (!data.success) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+                const usuario = data.usuario;
+                const iniciales = usuario.nombre.split(' ').slice(0, 2).map(p => p.charAt(0).toUpperCase()).join('');
+                
+                const sidebarAvatar = document.getElementById('sidebarAvatar');
+                const sidebarNombre = document.getElementById('sidebarNombre');
+                const sidebarRol = document.getElementById('sidebarRol');
+                if (sidebarAvatar) sidebarAvatar.textContent = iniciales;
+                if (sidebarNombre) sidebarNombre.textContent = usuario.nombre;
+                if (sidebarRol) sidebarRol.textContent = usuario.rol;
+                
+                const topbarNombre = document.getElementById('topbarNombre');
+                const topbarRol = document.getElementById('topbarRol');
+                const topbarAvatar = document.getElementById('topbarAvatar');
+                if (topbarNombre) topbarNombre.textContent = usuario.nombre;
+                if (topbarRol) topbarRol.textContent = usuario.rol;
+                if (topbarAvatar) topbarAvatar.textContent = iniciales;
+            } catch (error) {
+                window.location.href = 'login.html';
+            }
+        }
+
+        // ============================================
+        // CERRAR SESIÓN
+        // ============================================
+        async function cerrarSesion() {
+            try {
+                await fetch(API_AUTH + '/auth/logout', { method: 'POST' });
+            } catch (e) { console.error(e); }
+            window.location.href = 'login.html';
+        }
+
+        function normalizar(texto) {
+            return texto.toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/ñ/g, 'n').trim();
+        }
+
+        function mostrarLoading() {
+            document.getElementById('loadingState').style.display = 'block';
+            document.getElementById('tablaWrapper').style.display = 'none';
+            document.getElementById('sinResultados').style.display = 'none';
+            document.getElementById('errorState').style.display = 'none';
+        }
+        function mostrarTabla() {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('tablaWrapper').style.display = 'block';
+            document.getElementById('errorState').style.display = 'none';
+        }
+        function mostrarError(mensaje) {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('tablaWrapper').style.display = 'none';
+            document.getElementById('sinResultados').style.display = 'none';
+            document.getElementById('errorState').style.display = 'block';
+            document.getElementById('errorMessage').textContent = mensaje;
+        }
+
+        async function cargarReservas() {
+            mostrarLoading();
+            try {
+                const response = await fetch(API_URL);
+                if (!response.ok) throw new Error('Error del servidor: ' + response.status);
+                const data = await response.json();
+                if (data.success) {
+                    reservasCache = data.data;
+                    renderizarTabla();
+                    mostrarTabla();
+                } else {
+                    throw new Error(data.message || 'Error al cargar datos');
+                }
+            } catch (error) {
+                console.error('Error al cargar:', error);
+                mostrarError('No se pudieron cargar las reservaciones.');
+                showToast('danger', 'Error de conexión', 'No se pudo conectar con el servidor.');
+            }
+        }
+
+        function renderizarTabla() {
+            const tbody = document.getElementById('tbodyReservas');
+            const contador = document.getElementById('contadorFilas');
+            const sinResultados = document.getElementById('sinResultados');
+
+            const buscar = normalizar(document.getElementById('buscador').value.trim());
+            const filtroEstado = document.getElementById('filtroEstado').value;
+            const filtroHabitacion = document.getElementById('filtroHabitacion').value;
+
+            const filtradas = reservasCache.filter(function(r) {
+                const coincideBuscar = !buscar ||
+                    normalizar(r.huesped).includes(buscar) ||
+                    normalizar(r.cedula).includes(buscar) ||
+                    normalizar(r.habitacion).includes(buscar);
+                const coincideEstado = !filtroEstado || r.estado === filtroEstado;
+                const coincideHabitacion = !filtroHabitacion || (r.habitacion && r.habitacion.includes(filtroHabitacion));
+                return coincideBuscar && coincideEstado && coincideHabitacion;
+            });
+
+            tbody.innerHTML = '';
+            if (filtradas.length === 0) {
+                sinResultados.style.display = 'block';
+                contador.textContent = '0';
+                return;
+            }
+            sinResultados.style.display = 'none';
+
+            filtradas.forEach(function(r) {
+                let badgeClass = 'badge-info';
+                let badgeIcon = 'ℹ';
+                if (r.estado === 'Confirmada') { badgeClass = 'badge-success'; badgeIcon = '✓'; }
+                else if (r.estado === 'Pendiente') { badgeClass = 'badge-warning'; badgeIcon = '⏳'; }
+                else if (r.estado === 'Cancelada') { badgeClass = 'badge-danger'; badgeIcon = '✕'; }
+
+                const fila = document.createElement('tr');
+                fila.innerHTML =
+                    '<td><strong>' + escapeHtml(r.huesped) + '</strong></td>' +
+                    '<td>' + escapeHtml(r.cedula) + '</td>' +
+                    '<td>' + escapeHtml(r.habitacion) + '</td>' +
+                    '<td>' + formatearFecha(r.checkin) + '</td>' +
+                    '<td>' + formatearFecha(r.checkout) + '</td>' +
+                    '<td><span class="badge ' + badgeClass + '">' + badgeIcon + ' ' + escapeHtml(r.estado) + '</span></td>' +
+                    '<td style="text-align: right;">' +
+                        '<button class="btn btn-icon" onclick="abrirModalEditar(' + r.id + ')" title="Editar">✎</button> ' +
+                        '<button class="btn btn-icon" onclick="abrirModalEliminar(' + r.id + ')" title="Eliminar" style="background-color: var(--danger-light); color: var(--danger);">🗑</button>' +
+                    '</td>';
+                tbody.appendChild(fila);
+            });
+            contador.textContent = filtradas.length;
+        }
+
+        function formatearFecha(fecha) {
+            if (!fecha) return '—';
+            const partes = fecha.split('-');
+            return partes[2] + '/' + partes[1] + '/' + partes[0];
+        }
+
+        function escapeHtml(texto) {
+            if (!texto) return '';
+            const div = document.createElement('div');
+            div.textContent = texto;
+            return div.innerHTML;
+        }
+
+        function abrirModalCrear() {
+            document.getElementById('modalTitulo').textContent = 'Nueva Reservación';
+            document.getElementById('reservaId').value = '';
+            document.getElementById('inputHuesped').value = '';
+            document.getElementById('inputCedula').value = '';
+            document.getElementById('inputHabitacion').value = '';
+            document.getElementById('inputCheckin').value = '';
+            document.getElementById('inputCheckout').value = '';
+            document.getElementById('inputEstado').value = 'Pendiente';
+            limpiarErrores();
+            abrirModal('modalForm');
+        }
+
+        function abrirModalEditar(id) {
+            const r = reservasCache.find(function(x) { return x.id == id; });
+            if (!r) return;
+            document.getElementById('modalTitulo').textContent = 'Editar Reservación';
+            document.getElementById('reservaId').value = r.id;
+            document.getElementById('inputHuesped').value = r.huesped;
+            document.getElementById('inputCedula').value = r.cedula;
+            const selectHab = document.getElementById('inputHabitacion');
+            selectHab.value = '';
+            for (let i = 0; i < selectHab.options.length; i++) {
+                if (selectHab.options[i].value === r.habitacion) {
+                    selectHab.selectedIndex = i;
+                    break;
+                }
+            }
+            document.getElementById('inputCheckin').value = r.checkin;
+            document.getElementById('inputCheckout').value = r.checkout;
+            document.getElementById('inputEstado').value = r.estado;
+            limpiarErrores();
+            abrirModal('modalForm');
+        }
+
+        function abrirModalEliminar(id) {
+            const r = reservasCache.find(function(x) { return x.id == id; });
+            if (!r) return;
+            idAEliminar = id;
+            document.getElementById('eliminarNombre').textContent = r.huesped;
+            abrirModal('modalEliminar');
+        }
+
+        document.getElementById('btnGuardar').addEventListener('click', async function(e) {
+            e.preventDefault();
+            if (!validarFormulario()) return;
+            const id = document.getElementById('reservaId').value;
+            const btnGuardar = this;
+            const datos = {
+                huesped: document.getElementById('inputHuesped').value.trim(),
+                cedula: document.getElementById('inputCedula').value.trim(),
+                habitacion: document.getElementById('inputHabitacion').value,
+                checkin: document.getElementById('inputCheckin').value,
+                checkout: document.getElementById('inputCheckout').value,
+                estado: document.getElementById('inputEstado').value
+            };
+
+            btnGuardar.disabled = true;
+            btnGuardar.textContent = '⏳ Guardando...';
+
+            try {
+                const url = id ? API_URL + '/' + id : API_URL;
+                const metodo = id ? 'PUT' : 'POST';
+                const response = await fetch(url, {
+                    method: metodo,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(datos)
+                });
+                const resultado = await response.json();
+                if (response.ok && resultado.success) {
+                    cerrarModal('modalForm');
+                    showToast('success',
+                        id ? 'Reservación actualizada' : '¡Reservación creada!',
+                        id ? 'Los datos se guardaron correctamente.' : 'La nueva reserva fue registrada.'
+                    );
+                    await cargarReservas();
+                } else {
+                    showToast('danger', 'Error al guardar', resultado.message || 'Verifique los datos.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('danger', 'Error de conexión', 'No se pudo conectar con el servidor.');
+            } finally {
+                btnGuardar.disabled = false;
+                btnGuardar.textContent = '💾 Guardar Reservación';
+            }
+        });
+
+        document.getElementById('btnConfirmarEliminar').addEventListener('click', async function() {
+            if (idAEliminar === null) return;
+            const btnEliminar = this;
+            btnEliminar.disabled = true;
+            btnEliminar.textContent = '⏳ Eliminando...';
+            try {
+                const response = await fetch(API_URL + '/' + idAEliminar, { method: 'DELETE' });
+                const resultado = await response.json();
+                if (response.ok && resultado.success) {
+                    cerrarModal('modalEliminar');
+                    idAEliminar = null;
+                    showToast('success', 'Reservación eliminada', 'El registro fue eliminado permanentemente.');
+                    await cargarReservas();
+                } else {
+                    showToast('danger', 'Error al eliminar', resultado.message || 'Intente nuevamente.');
+                }
+            } catch (error) {
+                showToast('danger', 'Error de conexión', 'No se pudo conectar con el servidor.');
+            } finally {
+                btnEliminar.disabled = false;
+                btnEliminar.textContent = 'Sí, eliminar';
+            }
+        });
+
+        function validarFormulario() {
+            limpiarErrores();
+            let valido = true;
+            const huesped = document.getElementById('inputHuesped');
+            const cedula = document.getElementById('inputCedula');
+            const habitacion = document.getElementById('inputHabitacion');
+            const checkin = document.getElementById('inputCheckin');
+            const checkout = document.getElementById('inputCheckout');
+
+            if (!huesped.value.trim()) {
+                marcarError(huesped, 'errorHuesped', 'El nombre es obligatorio.');
+                valido = false;
+            }
+            const cedulaRegex = /^[VEJvej]-?\d{6,10}$/;
+            if (!cedula.value.trim()) {
+                marcarError(cedula, 'errorCedula', 'La cédula es obligatoria.');
+                valido = false;
+            } else if (!cedulaRegex.test(cedula.value.trim())) {
+                marcarError(cedula, 'errorCedula', 'Formato inválido (V-12345678).');
+                valido = false;
+            }
+            if (!habitacion.value) {
+                marcarError(habitacion, 'errorHabitacion', 'Seleccione una habitación.');
+                valido = false;
+            }
+            if (!checkin.value) {
+                marcarError(checkin, 'errorCheckin', 'Fecha de entrada obligatoria.');
+                valido = false;
+            }
+            if (!checkout.value) {
+                marcarError(checkout, 'errorCheckout', 'Fecha de salida obligatoria.');
+                valido = false;
+            } else if (checkin.value && checkout.value && checkout.value <= checkin.value) {
+                marcarError(checkout, 'errorCheckout', 'Debe ser posterior al check-in.');
+                valido = false;
+            }
+            if (!valido) {
+                showToast('danger', 'Error al guardar', 'Verifique los campos marcados en rojo.');
+            }
+            return valido;
+        }
+
+        function marcarError(input, errorId, mensaje) {
+            input.classList.add('error');
+            document.getElementById(errorId).textContent = '⚠ ' + mensaje;
+        }
+        function limpiarErrores() {
+            document.querySelectorAll('.form-control, .form-select').forEach(function(el) { el.classList.remove('error'); });
+            document.querySelectorAll('.form-error').forEach(function(el) { el.textContent = ''; });
+        }
+
+        function abrirModal(id) { document.getElementById(id).classList.add('active'); }
+        function cerrarModal(id) { document.getElementById(id).classList.remove('active'); }
+
+        document.querySelectorAll('.modal-overlay').forEach(function(overlay) {
+            overlay.addEventListener('click', function(e) {
+                if (e.target === this) this.classList.remove('active');
+            });
+        });
+
+        function showToast(type, title, message) {
+            const container = document.getElementById('toastContainer');
+            let seconds = 5;
+            const icons = { success: '✓', danger: '✕', warning: '⚠', info: 'ℹ' };
+            const toast = document.createElement('div');
+            toast.className = 'toast toast-' + type;
+            toast.innerHTML =
+                '<span class="toast-icon">' + icons[type] + '</span>' +
+                '<div class="toast-content">' +
+                    '<div class="toast-title">' + title + '</div>' +
+                    '<p class="toast-message">' + message + '</p>' +
+                '</div>' +
+                '<button class="toast-close" onclick="this.parentElement.remove()">×</button>' +
+                '<span class="toast-timer">' + seconds + 's</span>';
+            container.appendChild(toast);
+            const timerEl = toast.querySelector('.toast-timer');
+            const interval = setInterval(function() {
+                seconds--;
+                timerEl.textContent = seconds + 's';
+                if (seconds <= 0) {
+                    clearInterval(interval);
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateX(120%)';
+                    setTimeout(function() { toast.remove(); }, 300);
+                }
+            }, 1000);
+        }
+
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        const hamburger = document.getElementById('hamburger');
+        hamburger.addEventListener('click', function() {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        });
+        overlay.addEventListener('click', function() {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('active');
+        });
+
+        document.getElementById('buscador').addEventListener('input', renderizarTabla);
+        document.getElementById('filtroEstado').addEventListener('change', renderizarTabla);
+        document.getElementById('filtroHabitacion').addEventListener('change', renderizarTabla);
+
+        document.addEventListener('DOMContentLoaded', function() {
+            cargarDatosUsuario();
+            cargarReservas();
+        });
+    </script>
+
+</body>
+</html>

@@ -55,6 +55,6 @@ La Gerencia de Recepción del hotel Biotel Suites opera actualmente con hojas de
 - [ ] login.html
 - [ ] registro.html
 - [ ] dashboard.html
-- [ ] crud.html
+- [ ] Reservacion.html
 - [ ] styles.css
 - [ ] script.js

@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clientes — Biotel Suites</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <aside class="sidebar" id="sidebar">
+            <a href="dashboard.html" class="sidebar-brand">
+                <span class="sidebar-logo">BS</span><span>Biotel Suites</span>
+            </a>
+            <nav class="sidebar-nav">
+                <div class="nav-label">Principal</div>
+                <a href="dashboard.html" class="nav-link"><span>📊</span> <span>Dashboard</span></a>
+                <a href="Reservacion.html" class="nav-link"><span>🧾</span> <span>Reservaciones</span></a>
+                <a href="habitaciones.html" class="nav-link"><span>🛏️</span> <span>Habitaciones</span></a>
+                <a href="clientes.html" class="nav-link active"><span>👥</span> <span>Huespedes</span></a>
+                <div class="nav-label">Sistema</div>
+                <a href="sistema_diseno.html" class="nav-link"><span>🎨</span> <span>Sistema de Diseño</span></a>
+                <a href="javascript:void(0);" onclick="cerrarSesion()" class="nav-link">
+                <span>🚪</span> <span>Cerrar Sesión</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="sidebar-avatar">AC</div>
+                <div><div style="font-weight:600;color:white;">Ana Castillo</div><div style="font-size:.75rem;">Recepcionista</div></div>
+            </div>
+        </aside>
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <div class="main-content">
+            <header class="topbar">
+                <div style="display:flex;align-items:center;gap:1rem;">
+                    <button class="hamburger" id="hamburger">☰</button>
+                    <h1 class="topbar-title">Gestión de Clientes</h1>
+                </div>
+                <div class="topbar-user">
+                    <div class="topbar-user-info">
+                        <div class="topbar-user-name">Ana Castillo</div>
+                        <div class="topbar-user-role">Recepcionista</div>
+                    </div>
+                    <div class="sidebar-avatar" style="width:42px;height:42px;font-size:.9rem;">AC</div>
+                </div>
+            </header>
+
+            <main class="content">
+                <div class="page-header">
+                    <div>
+                        <h1>Clientes / Huéspedes</h1>
+                        <p>Administre la base de datos de clientes del hotel</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="abrirModalCrear()">
+                        <span>＋</span> Nuevo Cliente
+                    </button>
+                </div>
+
+                <div class="toolbar">
+                    <div class="search-box">
+                        <div class="input-group">
+                            <span class="input-icon">🔍</span>
+                            <input type="text" id="buscador" class="form-control" placeholder="Buscar por nombre, cédula o correo...">
+                        </div>
+                    </div>
+                    <select id="filtroNacionalidad" class="form-select" style="max-width:200px;">
+                        <option value="">Todas las nacionalidades</option>
+                        <option value="Venezolana">Venezolana</option>
+                        <option value="Colombiana">Colombiana</option>
+                        <option value="Extranjera">Extranjera</option>
+                    </select>
+                </div>
+
+                <div id="loadingState" style="text-align:center;padding:4rem 1rem;display:none;">
+                    <div style="font-size:3rem;margin-bottom:1rem;">⏳</div>
+                    <p style="color:var(--gray-500);">Cargando clientes...</p>
+                </div>
+
+                <div id="errorState" style="text-align:center;padding:4rem 1rem;display:none;">
+                    <div style="font-size:3rem;margin-bottom:1rem;">⚠️</div>
+                    <p style="color:var(--danger);font-weight:600;">Error de conexión</p>
+                    <p id="errorMessage" style="color:var(--gray-500);margin-bottom:1rem;"></p>
+                    <button class="btn btn-primary" onclick="cargarClientes()">🔄 Reintentar</button>
+                </div>
+
+                <div class="table-wrapper" id="tablaWrapper" style="display:none;">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Cédula</th>
+                                <th>Email</th>
+                                <th>Teléfono</th>
+                                <th>Nacionalidad</th>
+                                <th style="text-align:right;">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyClientes"></tbody>
+                    </table>
+                </div>
+
+                <div id="sinResultados" style="text-align:center;padding:3rem 1rem;color:var(--gray-500);display:none;">
+                    <div style="font-size:3rem;margin-bottom:.5rem;">🔍</div>
+                    <p>No se encontraron clientes con esos filtros.</p>
+                </div>
+
+                <div style="margin-top:1rem;text-align:right;color:var(--gray-500);font-size:.85rem;">
+                    Total: <strong id="contadorFilas">0</strong> cliente(s)
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- MODAL CREAR/EDITAR -->
+    <div class="modal-overlay" id="modalForm">
+        <div class="modal" style="max-width:600px;">
+            <div class="modal-header">
+                <h3 id="modalTitulo">Nuevo Cliente</h3>
+                <button class="modal-close" onclick="cerrarModal('modalForm')">×</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="clienteId" value="">
+
+                <div class="form-group">
+                    <label class="form-label">Nombre completo <span class="required">*</span></label>
+                    <input type="text" id="inputNombre" class="form-control" placeholder="Ej: María Delgado">
+                    <span class="form-error" id="errorNombre"></span>
+                </div>
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                    <div class="form-group">
+                        <label class="form-label">Cédula / RIF <span class="required">*</span></label>
+                        <input type="text" id="inputCedula" class="form-control" placeholder="V-12345678">
+                        <span class="form-error" id="errorCedula"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Nacionalidad</label>
+                        <select id="inputNacionalidad" class="form-select">
+                            <option value="Venezolana">Venezolana</option>
+                            <option value="Colombiana">Colombiana</option>
+                            <option value="Extranjera">Extranjera</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" id="inputEmail" class="form-control" placeholder="correo@email.com">
+                        <span class="form-error" id="errorEmail"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Teléfono</label>
+                        <input type="tel" id="inputTelefono" class="form-control" placeholder="0412-1234567">
+                        <span class="form-error" id="errorTelefono"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Dirección</label>
+                    <input type="text" id="inputDireccion" class="form-control" placeholder="Av. Principal, edificio...">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Fecha de nacimiento</label>
+                    <input type="date" id="inputFechaNac" class="form-control">
+                </div>
+
+                <div class="form-group" id="grupoPassword">
+                    <label class="form-label">Contraseña <small class="text-muted">(opcional en edición)</small></label>
+                    <input type="password" id="inputPassword" class="form-control" placeholder="Mínimo 6 caracteres">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="cerrarModal('modalForm')">Cancelar</button>
+                <button class="btn btn-primary" id="btnGuardar">💾 Guardar Cliente</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL ELIMINAR -->
+    <div class="modal-overlay" id="modalEliminar">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>🗑 Confirmar Eliminación</h3>
+                <button class="modal-close" onclick="cerrarModal('modalEliminar')">×</button>
+            </div>
+            <div class="modal-body">
+                <p><strong>¿Está seguro de eliminar este cliente?</strong></p>
+                <p class="text-muted" style="font-size:.9rem;">Cliente: <strong id="eliminarNombre">—</strong></p>
+                <p class="text-muted" style="font-size:.85rem;">El registro se marcará como inactivo.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="cerrarModal('modalEliminar')">Cancelar</button>
+                <button class="btn btn-danger" id="btnConfirmarEliminar">Sí, eliminar</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+
+        // ============================================
+// CARGAR DATOS DEL USUARIO LOGUEADO
+// ============================================
+async function cargarDatosUsuario() {
+    try {
+        const res = await fetch('http://localhost/biotel-suites-sistema/api/auth/me');
+        const data = await res.json();
+
+        // Si no está autenticado, redirigir al login
+        if (!data.success) {
+            window.location.href = 'login.html';
+            return;
+        }
+
+        const usuario = data.usuario;
+
+        // 1. Actualizar saludo en el topbar
+        const saludoEl = document.querySelector('.page-header h1');
+        if (saludoEl) {
+            const hora = new Date().getHours();
+            let saludo = 'Buenos días';
+            if (hora >= 12 && hora < 19) saludo = 'Buenas tardes';
+            if (hora >= 19) saludo = 'Buenas noches';
+
+            saludoEl.innerHTML = saludo + ', ' + usuario.nombre + ' 👋';
+        }
+
+        // 2. Actualizar sidebar footer
+        const nombreEl = document.querySelector('.sidebar-footer .user-name, .sidebar-footer div div:first-child');
+        const rolEl = document.querySelector('.sidebar-footer .user-role, .sidebar-footer div div:last-child');
+
+        if (nombreEl) nombreEl.textContent = usuario.nombre;
+        if (rolEl) rolEl.textContent = usuario.rol;
+
+        // 3. Actualizar avatar (iniciales)
+        const avatarEl = document.querySelector('.sidebar-footer .sidebar-avatar');
+        if (avatarEl) {
+            const iniciales = usuario.nombre
+                .split(' ')
+                .slice(0, 2)
+                .map(p => p.charAt(0).toUpperCase())
+                .join('');
+            avatarEl.textContent = iniciales;
+        }
+
+        // 4. Actualizar topbar user info
+        const topbarNombre = document.querySelector('.topbar-user-name');
+        const topbarRol = document.querySelector('.topbar-user-role');
+        const topbarAvatar = document.querySelector('.topbar-user .sidebar-avatar');
+
+        if (topbarNombre) topbarNombre.textContent = usuario.nombre;
+        if (topbarRol) topbarRol.textContent = usuario.rol;
+        if (topbarAvatar) {
+            const iniciales = usuario.nombre
+                .split(' ')
+                .slice(0, 2)
+                .map(p => p.charAt(0).toUpperCase())
+                .join('');
+            topbarAvatar.textContent = iniciales;
+        }
+
+    } catch (error) {
+        console.error('Error al cargar datos del usuario:', error);
+    }
+}
+function cerrarSesion() {
+    fetch('http://localhost/biotel-suites-sistema/api/auth/logout', { method: 'POST' })
+        .then(() => {
+            window.location.href = 'login.html';
+        })
+        .catch(() => {
+            window.location.href = 'login.html';
+        });
+}
+// Llamar al cargar la página
+document.addEventListener('DOMContentLoaded', cargarDatosUsuario);
+
+        const API_URL = 'http://localhost/biotel-suites-sistema/api/clientes';
+        let clientesCache = [];
+        let idAEliminar = null;
+
+        function normalizar(t) {
+            return t.toString().toLowerCase()
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                .replace(/ñ/g, 'n').trim();
+        }
+
+        function mostrarLoading() {
+            document.getElementById('loadingState').style.display = 'block';
+            document.getElementById('tablaWrapper').style.display = 'none';
+            document.getElementById('sinResultados').style.display = 'none';
+            document.getElementById('errorState').style.display = 'none';
+        }
+        function mostrarTabla() {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('tablaWrapper').style.display = 'block';
+            document.getElementById('errorState').style.display = 'none';
+        }
+        function mostrarError(msg) {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('tablaWrapper').style.display = 'none';
+            document.getElementById('sinResultados').style.display = 'none';
+            document.getElementById('errorState').style.display = 'block';
+            document.getElementById('errorMessage').textContent = msg;
+        }
+
+        async function cargarClientes() {
+            mostrarLoading();
+            try {
+                const res = await fetch(API_URL);
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                const data = await res.json();
+                if (data.success) {
+                    clientesCache = data.data;
+                    renderizarTabla();
+                    mostrarTabla();
+                } else {
+                    throw new Error(data.message || 'Error al cargar');
+                }
+            } catch (e) {
+                console.error(e);
+                mostrarError('No se pudieron cargar los clientes.');
+                showToast('danger', 'Error de conexión', 'No se pudo conectar con el servidor.');
+            }
+        }
+
+        function renderizarTabla() {
+            const tbody = document.getElementById('tbodyClientes');
+            const buscar = normalizar(document.getElementById('buscador').value.trim());
+            const filtroNac = document.getElementById('filtroNacionalidad').value;
+
+            const filtrados = clientesCache.filter(c => {
+                const coincide = !buscar ||
+                    normalizar(c.nombre || '').includes(buscar) ||
+                    normalizar(c.cedula || '').includes(buscar) ||
+                    normalizar(c.email || '').includes(buscar);
+                const coincideNac = !filtroNac || c.nacionalidad === filtroNac;
+                return coincide && coincideNac;
+            });
+
+            tbody.innerHTML = '';
+            const sinRes = document.getElementById('sinResultados');
+            if (filtrados.length === 0) {
+                sinRes.style.display = 'block';
+                document.getElementById('contadorFilas').textContent = '0';
+                return;
+            }
+            sinRes.style.display = 'none';
+
+            filtrados.forEach(c => {
+                const tr = document.createElement('tr');
+                tr.innerHTML =
+                    '<td><strong>' + escapeHtml(c.nombre) + '</strong></td>' +
+                    '<td>' + escapeHtml(c.cedula) + '</td>' +
+                    '<td>' + escapeHtml(c.email || '—') + '</td>' +
+                    '<td>' + escapeHtml(c.telefono || '—') + '</td>' +
+                    '<td>' + escapeHtml(c.nacionalidad || '—') + '</td>' +
+                    '<td style="text-align:right;">' +
+                        '<button class="btn btn-icon" onclick="abrirModalEditar(' + c.id + ')">✎</button> ' +
+                        '<button class="btn btn-icon" onclick="abrirModalEliminar(' + c.id + ')" style="background-color:var(--danger-light);color:var(--danger);">🗑</button>' +
+                    '</td>';
+                tbody.appendChild(tr);
+            });
+            document.getElementById('contadorFilas').textContent = filtrados.length;
+        }
+
+        function escapeHtml(t) {
+            if (!t) return '';
+            const d = document.createElement('div');
+            d.textContent = t;
+            return d.innerHTML;
+        }
+
+        function abrirModalCrear() {
+            document.getElementById('modalTitulo').textContent = 'Nuevo Cliente';
+            document.getElementById('clienteId').value = '';
+            ['inputNombre','inputCedula','inputEmail','inputTelefono','inputDireccion','inputFechaNac','inputPassword']
+                .forEach(id => document.getElementById(id).value = '');
+            document.getElementById('inputNacionalidad').value = 'Venezolana';
+            document.getElementById('grupoPassword').style.display = 'block';
+            limpiarErrores();
+            abrirModal('modalForm');
+        }
+
+        function abrirModalEditar(id) {
+            const c = clientesCache.find(x => x.id == id);
+            if (!c) return;
+            document.getElementById('modalTitulo').textContent = 'Editar Cliente';
+            document.getElementById('clienteId').value = c.id;
+            document.getElementById('inputNombre').value = c.nombre || '';
+            document.getElementById('inputCedula').value = c.cedula || '';
+            document.getElementById('inputEmail').value = c.email || '';
+            document.getElementById('inputTelefono').value = c.telefono || '';
+            document.getElementById('inputDireccion').value = c.direccion || '';
+            document.getElementById('inputFechaNac').value = c.fecha_nacimiento || '';
+            document.getElementById('inputNacionalidad').value = c.nacionalidad || 'Venezolana';
+            document.getElementById('inputPassword').value = '';
+            document.getElementById('grupoPassword').style.display = 'block';
+            limpiarErrores();
+            abrirModal('modalForm');
+        }
+
+        function abrirModalEliminar(id) {
+            const c = clientesCache.find(x => x.id == id);
+            if (!c) return;
+            idAEliminar = id;
+            document.getElementById('eliminarNombre').textContent = c.nombre;
+            abrirModal('modalEliminar');
+        }
+
+        document.getElementById('btnGuardar').addEventListener('click', async function() {
+            if (!validarFormulario()) return;
+            const id = document.getElementById('clienteId').value;
+            const btn = this;
+            const datos = {
+                nombre: document.getElementById('inputNombre').value.trim(),
+                cedula: document.getElementById('inputCedula').value.trim(),
+                email: document.getElementById('inputEmail').value.trim(),
+                telefono: document.getElementById('inputTelefono').value.trim(),
+                direccion: document.getElementById('inputDireccion').value.trim(),
+                fecha_nacimiento: document.getElementById('inputFechaNac').value,
+                nacionalidad: document.getElementById('inputNacionalidad').value,
+                password: document.getElementById('inputPassword').value
+            };
+
+            btn.disabled = true;
+            btn.textContent = '⏳ Guardando...';
+            try {
+                const url = id ? API_URL + '/' + id : API_URL;
+                const metodo = id ? 'PUT' : 'POST';
+                const res = await fetch(url, {
+                    method: metodo,
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(datos)
+                });
+                const resultado = await res.json();
+                if (res.ok && resultado.success) {
+                    cerrarModal('modalForm');
+                    showToast('success',
+                        id ? 'Cliente actualizado' : '¡Cliente creado!',
+                        'Los datos se guardaron correctamente.');
+                    await cargarClientes();
+                } else {
+                    showToast('danger', 'Error al guardar', resultado.message || 'Verifique los datos.');
+                }
+            } catch (e) {
+                showToast('danger', 'Error de conexión', 'No se pudo conectar con el servidor.');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '💾 Guardar Cliente';
+            }
+        });
+
+        document.getElementById('btnConfirmarEliminar').addEventListener('click', async function() {
+            if (idAEliminar === null) return;
+            const btn = this;
+            btn.disabled = true;
+            btn.textContent = '⏳ Eliminando...';
+            try {
+                const res = await fetch(API_URL + '/' + idAEliminar, {method: 'DELETE'});
+                const resultado = await res.json();
+                if (res.ok && resultado.success) {
+                    cerrarModal('modalEliminar');
+                    idAEliminar = null;
+                    showToast('success', 'Cliente eliminado', 'El registro fue desactivado.');
+                    await cargarClientes();
+                } else {
+                    showToast('danger', 'Error al eliminar', resultado.message || 'Intente nuevamente.');
+                }
+            } catch (e) {
+                showToast('danger', 'Error de conexión', 'No se pudo conectar.');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Sí, eliminar';
+            }
+        });
+
+        function validarFormulario() {
+            limpiarErrores();
+            let valido = true;
+            const nombre = document.getElementById('inputNombre');
+            const cedula = document.getElementById('inputCedula');
+            const email = document.getElementById('inputEmail');
+            const telefono = document.getElementById('inputTelefono');
+
+            if (!nombre.value.trim() || nombre.value.trim().length < 3) {
+                marcarError(nombre, 'errorNombre', 'Nombre obligatorio (mín. 3 caracteres).');
+                valido = false;
+            }
+            const cedulaRegex = /^[VEJvej]-?\d{6,10}$/;
+            if (!cedula.value.trim()) {
+                marcarError(cedula, 'errorCedula', 'La cédula es obligatoria.');
+                valido = false;
+            } else if (!cedulaRegex.test(cedula.value.trim())) {
+                marcarError(cedula, 'errorCedula', 'Formato inválido (V-12345678).');
+                valido = false;
+            }
+            if (email.value.trim()) {
+                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!re.test(email.value.trim())) {
+                    marcarError(email, 'errorEmail', 'Correo inválido.');
+                    valido = false;
+                }
+            }
+            if (telefono.value.trim() && !/^[0-9\-\+\s]{10,20}$/.test(telefono.value.trim())) {
+                marcarError(telefono, 'errorTelefono', 'Teléfono inválido.');
+                valido = false;
+            }
+            if (!valido) showToast('danger', 'Error al guardar', 'Verifique los campos marcados.');
+            return valido;
+        }
+
+        function marcarError(input, id, msg) {
+            input.classList.add('error');
+            document.getElementById(id).textContent = '⚠ ' + msg;
+        }
+        function limpiarErrores() {
+            document.querySelectorAll('.form-control, .form-select').forEach(el => el.classList.remove('error'));
+            document.querySelectorAll('.form-error').forEach(el => el.textContent = '');
+        }
+
+        function abrirModal(id) { document.getElementById(id).classList.add('active'); }
+        function cerrarModal(id) { document.getElementById(id).classList.remove('active'); }
+        document.querySelectorAll('.modal-overlay').forEach(ov => {
+            ov.addEventListener('click', function(e) { if (e.target === this) this.classList.remove('active'); });
+        });
+
+        function showToast(type, title, message) {
+            const container = document.getElementById('toastContainer');
+            let seconds = 5;
+            const icons = { success:'✓', danger:'✕', warning:'⚠', info:'ℹ' };
+            const toast = document.createElement('div');
+            toast.className = 'toast toast-' + type;
+            toast.innerHTML =
+                '<span class="toast-icon">' + icons[type] + '</span>' +
+                '<div class="toast-content">' +
+                    '<div class="toast-title">' + title + '</div>' +
+                    '<p class="toast-message">' + message + '</p>' +
+                '</div>' +
+                '<button class="toast-close" onclick="this.parentElement.remove()">×</button>' +
+                '<span class="toast-timer">' + seconds + 's</span>';
+            container.appendChild(toast);
+            const timerEl = toast.querySelector('.toast-timer');
+            const interval = setInterval(() => {
+                seconds--;
+                timerEl.textContent = seconds + 's';
+                if (seconds <= 0) {
+                    clearInterval(interval);
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateX(120%)';
+                    setTimeout(() => toast.remove(), 300);
+                }
+            }, 1000);
+        }
+
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        document.getElementById('hamburger').addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        });
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('active');
+        });
+
+        document.getElementById('buscador').addEventListener('input', renderizarTabla);
+        document.getElementById('filtroNacionalidad').addEventListener('change', renderizarTabla);
+
+        document.addEventListener('DOMContentLoaded', cargarClientes);
+    </script>
+</body>
+</html>

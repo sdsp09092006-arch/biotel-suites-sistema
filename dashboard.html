@@ -29,30 +29,16 @@
                     <span>📊</span> <span>Dashboard</span>
                 </a>
 
-                <a href="crud.html" class="nav-link">
+                <a href="Reservacion.html" class="nav-link">
                     <span>🧾</span> <span>Reservaciones</span>
                 </a>
 
-                <a href="crud.html" class="nav-link">
+                <a href="habitaciones.html" class="nav-link">
                     <span>🛏️</span> <span>Habitaciones</span>
                 </a>
 
-                <a href="crud.html" class="nav-link">
+                <a href="clientes.html" class="nav-link">
                     <span>👥</span> <span>Huéspedes</span>
-                </a>
-
-                <div class="nav-label">Gestión</div>
-
-                <a href="#" class="nav-link">
-                    <span>🔑</span> <span>Check-in / Check-out</span>
-                </a>
-
-                <a href="#" class="nav-link">
-                    <span>🧹</span> <span>Ama de Llaves</span>
-                </a>
-
-                <a href="#" class="nav-link">
-                    <span>💰</span> <span>Facturación</span>
                 </a>
 
                 <div class="nav-label">Sistema</div>
@@ -61,16 +47,16 @@
                     <span>🎨</span> <span>Sistema de Diseño</span>
                 </a>
 
-                <a href="login.html" class="nav-link">
+                <a href="javascript:void(0);" onclick="cerrarSesion()" class="nav-link">
                     <span>🚪</span> <span>Cerrar Sesión</span>
                 </a>
             </nav>
 
             <div class="sidebar-footer">
-                <div class="sidebar-avatar">AC</div>
+                <div class="sidebar-avatar" id="sidebarAvatar">--</div>
                 <div>
-                    <div style="font-weight: 600; color: white;">Ana Castillo</div>
-                    <div style="font-size: 0.75rem;">Recepcionista</div>
+                    <div style="font-weight: 600; color: white;" id="sidebarNombre">Cargando...</div>
+                    <div style="font-size: 0.75rem;" id="sidebarRol">--</div>
                 </div>
             </div>
         </aside>
@@ -94,10 +80,10 @@
 
                 <div class="topbar-user">
                     <div class="topbar-user-info">
-                        <div class="topbar-user-name">Ana Castillo</div>
-                        <div class="topbar-user-role">Recepcionista</div>
+                        <div class="topbar-user-name" id="topbarNombre">Cargando...</div>
+                        <div class="topbar-user-role" id="topbarRol">--</div>
                     </div>
-                    <div class="sidebar-avatar" style="width: 42px; height: 42px; font-size: 0.9rem;">AC</div>
+                    <div class="sidebar-avatar" id="topbarAvatar" style="width: 42px; height: 42px; font-size: 0.9rem;">--</div>
                 </div>
             </header>
 
@@ -107,10 +93,10 @@
                 <!-- Page header -->
                 <div class="page-header">
                     <div>
-                        <h1>Buenos días, Ana 👋</h1>
+                        <h1 id="saludoUsuario">Bienvenido 👋</h1>
                         <p>Aquí está el resumen del hotel hoy · <span id="fechaHoy"></span></p>
                     </div>
-                    <button class="btn btn-primary" onclick="window.location.href='crud.html'">
+                    <button class="btn btn-primary" onclick="window.location.href='Reservacion.html'">
                         <span>＋</span> Nueva Reservación
                     </button>
                 </div>
@@ -159,7 +145,7 @@
                     <h2 style="font-size: 1.15rem; margin-bottom: 1rem;">Accesos Rápidos</h2>
 
                     <div class="cards-grid">
-                        <a href="crud.html" class="card" style="text-decoration: none; padding: 1.5rem; display: block; transition: var(--transition);">
+                        <a href="Reservacion.html" class="card" style="text-decoration: none; padding: 1.5rem; display: block; transition: var(--transition);">
                             <div style="font-size: 2rem; margin-bottom: 0.75rem;">🧾</div>
                             <h3 style="font-size: 1.1rem; margin-bottom: 0.25rem; color: var(--gray-900);">Gestionar Reservaciones</h3>
                             <p style="font-size: 0.85rem; color: var(--gray-500); margin: 0;">
@@ -167,7 +153,7 @@
                             </p>
                         </a>
 
-                        <a href="crud.html" class="card" style="text-decoration: none; padding: 1.5rem; display: block; transition: var(--transition);">
+                        <a href="habitaciones.html" class="card" style="text-decoration: none; padding: 1.5rem; display: block; transition: var(--transition);">
                             <div style="font-size: 2rem; margin-bottom: 0.75rem;">🛏️</div>
                             <h3 style="font-size: 1.1rem; margin-bottom: 0.25rem; color: var(--gray-900);">Estado de Habitaciones</h3>
                             <p style="font-size: 0.85rem; color: var(--gray-500); margin: 0;">
@@ -175,19 +161,11 @@
                             </p>
                         </a>
 
-                        <a href="crud.html" class="card" style="text-decoration: none; padding: 1.5rem; display: block; transition: var(--transition);">
+                        <a href="clientes.html" class="card" style="text-decoration: none; padding: 1.5rem; display: block; transition: var(--transition);">
                             <div style="font-size: 2rem; margin-bottom: 0.75rem;">👥</div>
                             <h3 style="font-size: 1.1rem; margin-bottom: 0.25rem; color: var(--gray-900);">Registro de Huéspedes</h3>
                             <p style="font-size: 0.85rem; color: var(--gray-500); margin: 0;">
                                 Base de datos de clientes
-                            </p>
-                        </a>
-
-                        <a href="crud.html" class="card" style="text-decoration: none; padding: 1.5rem; display: block; transition: var(--transition);">
-                            <div style="font-size: 2rem; margin-bottom: 0.75rem;">💰</div>
-                            <h3 style="font-size: 1.1rem; margin-bottom: 0.25rem; color: var(--gray-900);">Facturación y Consumos</h3>
-                            <p style="font-size: 0.85rem; color: var(--gray-500); margin: 0;">
-                                Cargos y cierre de cuentas
                             </p>
                         </a>
                     </div>
@@ -197,7 +175,7 @@
                 <section style="margin-top: 2rem;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
                         <h2 style="font-size: 1.15rem; margin: 0;">Reservaciones del Día</h2>
-                        <a href="crud.html" class="btn btn-outline btn-sm">Ver todas</a>
+                        <a href="Reservacion.html" class="btn btn-outline btn-sm">Ver todas</a>
                     </div>
 
                     <div class="table-wrapper">
@@ -265,22 +243,90 @@
     <!-- Contenedor de Toasts -->
     <div class="toast-container" id="toastContainer"></div>
 
+    <!-- ============================================ -->
+    <!-- SCRIPT DINÁMICO -->
+    <!-- ============================================ -->
     <script>
-        // ============================================
-        // MOSTRAR FECHA ACTUAL
-        // ============================================
-        var fecha = new Date();
-        var dias = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
-        var meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-        var fechaTexto = dias[fecha.getDay()] + ', ' + fecha.getDate() + ' de ' + meses[fecha.getMonth()] + ' de ' + fecha.getFullYear();
-        document.getElementById('fechaHoy').textContent = fechaTexto;
+        const API_URL = 'http://localhost/biotel-suites-sistema/api';
 
         // ============================================
-        // TOGGLE SIDEBAR EN MÓVIL
+        // CARGAR DATOS DEL USUARIO LOGUEADO
         // ============================================
-        var sidebar = document.getElementById('sidebar');
-        var overlay = document.getElementById('sidebarOverlay');
-        var hamburger = document.getElementById('hamburger');
+        async function cargarDatosUsuario() {
+            try {
+                const res = await fetch(API_URL + '/auth/me');
+                const data = await res.json();
+
+                // Si no está autenticado, redirigir al login
+                if (!data.success) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                const usuario = data.usuario;
+
+                // 1. Calcular iniciales
+                const iniciales = usuario.nombre
+                    .split(' ')
+                    .slice(0, 2)
+                    .map(p => p.charAt(0).toUpperCase())
+                    .join('');
+
+                // 2. Sidebar footer
+                document.getElementById('sidebarAvatar').textContent = iniciales;
+                document.getElementById('sidebarNombre').textContent = usuario.nombre;
+                document.getElementById('sidebarRol').textContent = usuario.rol;
+
+                // 3. Topbar
+                document.getElementById('topbarNombre').textContent = usuario.nombre;
+                document.getElementById('topbarRol').textContent = usuario.rol;
+                document.getElementById('topbarAvatar').textContent = iniciales;
+
+                // 4. Saludo dinámico
+                const hora = new Date().getHours();
+                let saludo = 'Buenos días';
+                if (hora >= 12 && hora < 19) saludo = 'Buenas tardes';
+                if (hora >= 19) saludo = 'Buenas noches';
+
+                const primerNombre = usuario.nombre.split(' ')[0];
+                document.getElementById('saludoUsuario').innerHTML = 
+                    saludo + ', ' + primerNombre + ' 👋';
+
+            } catch (error) {
+                console.error('Error al cargar usuario:', error);
+                window.location.href = 'login.html';
+            }
+        }
+
+        // ============================================
+        // CERRAR SESIÓN
+        // ============================================
+        async function cerrarSesion() {
+            try {
+                await fetch(API_URL + '/auth/logout', { method: 'POST' });
+            } catch (e) {
+                console.error(e);
+            }
+            window.location.href = 'login.html';
+        }
+
+        // ============================================
+        // FECHA DE HOY
+        // ============================================
+        function mostrarFechaHoy() {
+            const fecha = new Date();
+            const dias = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+            const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+            const texto = dias[fecha.getDay()] + ', ' + fecha.getDate() + ' de ' + meses[fecha.getMonth()] + ' de ' + fecha.getFullYear();
+            document.getElementById('fechaHoy').textContent = texto;
+        }
+
+        // ============================================
+        // SIDEBAR MÓVIL
+        // ============================================
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        const hamburger = document.getElementById('hamburger');
 
         hamburger.addEventListener('click', function() {
             sidebar.classList.toggle('open');
@@ -293,49 +339,12 @@
         });
 
         // ============================================
-        // TOASTS
+        // INICIALIZAR
         // ============================================
-        function showToast(type, title, message) {
-            var container = document.getElementById('toastContainer');
-            var seconds = 5;
-
-            var icons = {
-                success: '✓',
-                danger: '✕',
-                warning: '⚠',
-                info: 'ℹ'
-            };
-
-            var toast = document.createElement('div');
-            toast.className = 'toast toast-' + type;
-            toast.innerHTML = 
-                '<span class="toast-icon">' + icons[type] + '</span>' +
-                '<div class="toast-content">' +
-                    '<div class="toast-title">' + title + '</div>' +
-                    '<p class="toast-message">' + message + '</p>' +
-                '</div>' +
-                '<button class="toast-close" onclick="this.parentElement.remove()">×</button>' +
-                '<span class="toast-timer">' + seconds + 's</span>';
-
-            container.appendChild(toast);
-
-            var timerEl = toast.querySelector('.toast-timer');
-            var interval = setInterval(function() {
-                seconds--;
-                timerEl.textContent = seconds + 's';
-                if (seconds <= 0) {
-                    clearInterval(interval);
-                    toast.style.opacity = '0';
-                    toast.style.transform = 'translateX(120%)';
-                    setTimeout(function() { toast.remove(); }, 300);
-                }
-            }, 1000);
-        }
-
-        // Mostrar toast de bienvenida
-        setTimeout(function() {
-            showToast('info', 'Sesión iniciada', 'Bienvenida Ana, tiene 12 check-ins pendientes hoy.');
-        }, 800);
+        document.addEventListener('DOMContentLoaded', function() {
+            mostrarFechaHoy();
+            cargarDatosUsuario();
+        });
     </script>
 
 </body>

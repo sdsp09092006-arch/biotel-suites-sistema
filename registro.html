@@ -24,9 +24,11 @@
 
                 <!-- Badge de rol por defecto -->
                 <div style="margin-top: 1rem;">
-                    <span class="badge badge-primary" style="padding: 0.4rem 1rem; font-size: 0.8rem;">
-                        ★ Rol asignado: Cliente / Huésped
-                    </span>
+                <label class="form-label">Rol en el hotel *</label>
+                <select id="regRol" class="form-select">
+                <option value="Recepcionista">Recepcionista</option>
+                <option value="Gerente">Gerente</option>
+                </select>
                 </div>
             </header>
 
@@ -125,7 +127,7 @@
                             id="regPassword"
                             name="regPassword"
                             class="form-control"
-                            placeholder="Mínimo 8 caracteres"
+                            placeholder="Mínimo 6 caracteres"
                             autocomplete="new-password"
                             required
                         >
@@ -203,166 +205,146 @@
     <div class="toast-container" id="toastContainer"></div>
 
     <script>
-        // ============================================
-        // MOSTRAR / OCULTAR CONTRASEÑA
-        // ============================================
-        function togglePass(id, btn) {
-            var input = document.getElementById(id);
-            if (input.type === 'password') {
-                input.type = 'text';
-                btn.textContent = '🙈';
+    const API_URL = 'http://localhost/biotel-suites-sistema/api/auth';
+
+    function togglePass(id, btn) {
+        var input = document.getElementById(id);
+        if (input.type === 'password') {
+            input.type = 'text';
+            btn.textContent = '🙈';
+        } else {
+            input.type = 'password';
+            btn.textContent = '👁';
+        }
+    }
+
+    document.getElementById('registerForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        var fullname = document.getElementById('fullname');
+        var documentInput = document.getElementById('document');
+        var email = document.getElementById('regEmail');
+        var phone = document.getElementById('phone');
+        var password = document.getElementById('regPassword');
+        var confirm = document.getElementById('regConfirm');
+        var terms = document.getElementById('terms');
+        var rol = document.getElementById('regRol');
+        var btnSubmit = this.querySelector('button[type="submit"]');
+
+        document.querySelectorAll('.form-control').forEach(el => el.classList.remove('error'));
+        document.querySelectorAll('.form-error').forEach(el => el.textContent = '');
+
+        var valido = true;
+
+        if (!fullname.value.trim() || fullname.value.trim().length < 3) {
+            marcarError(fullname, 'errorFullname', 'Nombre obligatorio.');
+            valido = false;
+        }
+
+        var cedulaRegex = /^[VEJvej]-?\d{6,10}$/;
+        if (!documentInput.value.trim() || !cedulaRegex.test(documentInput.value.trim())) {
+            marcarError(documentInput, 'errorDocument', 'Cédula inválida.');
+            valido = false;
+        }
+
+        var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email.value.trim() || !emailRegex.test(email.value.trim())) {
+            marcarError(email, 'errorEmail', 'Correo inválido.');
+            valido = false;
+        }
+
+        if (!password.value || password.value.length < 6) {
+            marcarError(password, 'errorPassword', 'Contraseña mínimo 6 caracteres.');
+            valido = false;
+        }
+
+        if (password.value !== confirm.value) {
+            marcarError(confirm, 'errorConfirm', 'Las contraseñas no coinciden.');
+            valido = false;
+        }
+
+        if (!terms.checked) {
+            document.getElementById('errorTerms').textContent = '⚠ Debe aceptar los términos.';
+            valido = false;
+        }
+
+        if (!valido) {
+            showToast('danger', 'Error en el registro', 'Verifica los campos marcados.');
+            return;
+        }
+
+        btnSubmit.disabled = true;
+        btnSubmit.textContent = '⏳ Registrando...';
+
+        try {
+            const response = await fetch(API_URL + '/registro', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    nombre: fullname.value.trim(),
+                    email: email.value.trim(),
+                    password: password.value,
+                    rol: rol ? rol.value : 'Recepcionista',
+                    cedula: documentInput.value.trim(),
+                    telefono: phone.value.trim()
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                showToast('success', '¡Registro exitoso!', data.message);
+                setTimeout(function() {
+                    window.location.href = 'login.html';
+                }, 2000);
             } else {
-                input.type = 'password';
-                btn.textContent = '👁';
+                showToast('danger', 'Error al registrar', data.message || 'Verifica los datos.');
             }
+        } catch (error) {
+            console.error(error);
+            showToast('danger', 'Error de conexión', 'No se pudo conectar.');
+        } finally {
+            btnSubmit.disabled = false;
+            btnSubmit.textContent = 'Crear mi cuenta';
         }
+    });
 
-        // ============================================
-        // VALIDACIÓN DEL FORMULARIO
-        // ============================================
-        document.getElementById('registerForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+    function marcarError(input, errorId, mensaje) {
+        input.classList.add('error');
+        document.getElementById(errorId).textContent = '⚠ ' + mensaje;
+    }
 
-            var fullname = document.getElementById('fullname');
-            var documentInput = document.getElementById('document');
-            var email = document.getElementById('regEmail');
-            var password = document.getElementById('regPassword');
-            var confirm = document.getElementById('regConfirm');
-            var terms = document.getElementById('terms');
+    function showToast(type, title, message) {
+        var container = document.getElementById('toastContainer');
+        var seconds = 5;
+        var icons = { success: '✓', danger: '✕', warning: '⚠', info: 'ℹ' };
 
-            // Limpiar errores
-            document.querySelectorAll('.form-control').forEach(function(el) {
-                el.classList.remove('error');
-            });
-            document.querySelectorAll('.form-error').forEach(function(el) {
-                el.textContent = '';
-            });
+        var toast = document.createElement('div');
+        toast.className = 'toast toast-' + type;
+        toast.innerHTML =
+            '<span class="toast-icon">' + icons[type] + '</span>' +
+            '<div class="toast-content">' +
+                '<div class="toast-title">' + title + '</div>' +
+                '<p class="toast-message">' + message + '</p>' +
+            '</div>' +
+            '<button class="toast-close" onclick="this.parentElement.remove()">×</button>' +
+            '<span class="toast-timer">' + seconds + 's</span>';
 
-            var valido = true;
+        container.appendChild(toast);
 
-            // Validar nombre
-            if (!fullname.value.trim()) {
-                marcarError(fullname, 'errorFullname', 'El nombre completo es obligatorio.');
-                valido = false;
-            } else if (fullname.value.trim().length < 3) {
-                marcarError(fullname, 'errorFullname', 'Nombre demasiado corto.');
-                valido = false;
+        var timerEl = toast.querySelector('.toast-timer');
+        var interval = setInterval(function() {
+            seconds--;
+            timerEl.textContent = seconds + 's';
+            if (seconds <= 0) {
+                clearInterval(interval);
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(120%)';
+                setTimeout(function() { toast.remove(); }, 300);
             }
-
-            // Validar cédula/RIF
-            var docRegex = /^[VEJvej]-?\d{6,10}$/;
-            if (!documentInput.value.trim()) {
-                marcarError(documentInput, 'errorDocument', 'La cédula o RIF es obligatorio.');
-                valido = false;
-            } else if (!docRegex.test(documentInput.value.trim())) {
-                marcarError(documentInput, 'errorDocument', 'Formato inválido. Use: V-12345678');
-                valido = false;
-            }
-
-            // Validar email
-            var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!email.value.trim()) {
-                marcarError(email, 'errorEmail', 'El correo es obligatorio.');
-                valido = false;
-            } else if (!emailRegex.test(email.value.trim())) {
-                marcarError(email, 'errorEmail', 'Formato de correo inválido.');
-                valido = false;
-            }
-
-            // Validar contraseña
-            if (!password.value) {
-                marcarError(password, 'errorPassword', 'La contraseña es obligatoria.');
-                valido = false;
-            } else if (password.value.length < 8) {
-                marcarError(password, 'errorPassword', 'Mínimo 8 caracteres.');
-                valido = false;
-            }
-
-            // Validar confirmación
-            if (password.value !== confirm.value) {
-                marcarError(confirm, 'errorConfirm', 'Las contraseñas no coinciden.');
-                valido = false;
-            }
-
-            // Validar términos
-            if (!terms.checked) {
-                document.getElementById('errorTerms').textContent = '⚠ Debe aceptar los términos y condiciones.';
-                valido = false;
-            }
-
-            if (!valido) {
-                showToast('danger', 'Error en el registro', 'Verifique los campos marcados en rojo.');
-                return;
-            }
-
-            // Éxito
-            showToast('success', '¡Registro Exitoso!', 'Su cuenta fue creada. Redirigiendo al login...');
-
-            setTimeout(function() {
-                window.location.href = 'login.html';
-            }, 2000);
-        });
-
-        // ============================================
-        // UTILIDAD: MARCAR ERROR
-        // ============================================
-        function marcarError(input, errorId, mensaje) {
-            input.classList.add('error');
-            document.getElementById(errorId).textContent = '⚠ ' + mensaje;
-        }
-
-        // ============================================
-        // LIMPIAR ERRORES AL ESCRIBIR
-        // ============================================
-        document.querySelectorAll('.form-control').forEach(function(input) {
-            input.addEventListener('input', function() {
-                this.classList.remove('error');
-                var errorId = 'error' + this.id.charAt(0).toUpperCase() + this.id.slice(1).replace('reg', '');
-                var errorEl = document.getElementById(errorId);
-                if (errorEl) errorEl.textContent = '';
-            });
-        });
-
-        // ============================================
-        // TOASTS
-        // ============================================
-        function showToast(type, title, message) {
-            var container = document.getElementById('toastContainer');
-            var seconds = 5;
-
-            var icons = {
-                success: '✓',
-                danger: '✕',
-                warning: '⚠',
-                info: 'ℹ'
-            };
-
-            var toast = document.createElement('div');
-            toast.className = 'toast toast-' + type;
-            toast.innerHTML = 
-                '<span class="toast-icon">' + icons[type] + '</span>' +
-                '<div class="toast-content">' +
-                    '<div class="toast-title">' + title + '</div>' +
-                    '<p class="toast-message">' + message + '</p>' +
-                '</div>' +
-                '<button class="toast-close" onclick="this.parentElement.remove()">×</button>' +
-                '<span class="toast-timer">' + seconds + 's</span>';
-
-            container.appendChild(toast);
-
-            var timerEl = toast.querySelector('.toast-timer');
-            var interval = setInterval(function() {
-                seconds--;
-                timerEl.textContent = seconds + 's';
-                if (seconds <= 0) {
-                    clearInterval(interval);
-                    toast.style.opacity = '0';
-                    toast.style.transform = 'translateX(120%)';
-                    setTimeout(function() { toast.remove(); }, 300);
-                }
-            }, 1000);
-        }
-    </script>
+        }, 1000);
+    }
+</script>
 
 </body>
 </html>

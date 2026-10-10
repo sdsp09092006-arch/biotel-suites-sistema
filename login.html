@@ -99,7 +99,7 @@
             <!-- ============================================ -->
             <footer class="auth-footer">
                 <p>¿No tienes una cuenta?
-                    <a href="registro.html">Crear cuenta pública</a>
+                    <a href="registro.html">Registro de personal</a>
                 </p>
                 <p style="margin-top: 0.5rem; font-size: 0.8rem;">
                     <a href="sistema_diseno.html" style="color: var(--gray-500);">
@@ -115,132 +115,117 @@
     <div class="toast-container" id="toastContainer"></div>
 
     <script>
-        // ============================================
-        // MOSTRAR / OCULTAR CONTRASEÑA
-        // ============================================
-        function togglePassword() {
-            var input = document.getElementById('password');
-            var btn = document.getElementById('toggleBtn');
+    function togglePassword() {
+        var input = document.getElementById('password');
+        var btn = document.getElementById('toggleBtn');
+        if (input.type === 'password') {
+            input.type = 'text';
+            btn.textContent = '🙈';
+        } else {
+            input.type = 'password';
+            btn.textContent = '👁';
+        }
+    }
 
-            if (input.type === 'password') {
-                input.type = 'text';
-                btn.textContent = '🙈';
+    const API_URL = 'http://localhost/biotel-suites-sistema/api/auth';
+
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        var email = document.getElementById('email');
+        var password = document.getElementById('password');
+        var errorEmail = document.getElementById('errorEmail');
+        var errorPassword = document.getElementById('errorPassword');
+        var btnSubmit = this.querySelector('button[type="submit"]');
+
+        email.classList.remove('error');
+        password.classList.remove('error');
+        errorEmail.textContent = '';
+        errorPassword.textContent = '';
+
+        var valido = true;
+        var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!email.value.trim() || !emailRegex.test(email.value.trim())) {
+            email.classList.add('error');
+            errorEmail.textContent = '⚠ Correo inválido.';
+            valido = false;
+        }
+
+        if (!password.value.trim() || password.value.length < 6) {
+            password.classList.add('error');
+            errorPassword.textContent = '⚠ Contraseña mínimo 6 caracteres.';
+            valido = false;
+        }
+
+        if (!valido) {
+            showToast('danger', 'Error al iniciar sesión', 'Verifica los campos.');
+            return;
+        }
+
+        btnSubmit.disabled = true;
+        btnSubmit.textContent = '⏳ Verificando...';
+
+        try {
+            const response = await fetch(API_URL + '/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: email.value.trim(),
+                    password: password.value
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                showToast('success', '¡Bienvenido!', data.message);
+                setTimeout(function() {
+                    window.location.href = 'dashboard.html';
+                }, 1500);
             } else {
-                input.type = 'password';
-                btn.textContent = '👁';
+                showToast('danger', 'Error', data.message || 'Credenciales incorrectas.');
             }
+        } catch (error) {
+            console.error(error);
+            showToast('danger', 'Error de conexión', 'No se pudo conectar con el servidor.');
+        } finally {
+            btnSubmit.disabled = false;
+            btnSubmit.textContent = 'Ingresar al sistema';
         }
+    });
 
-        // ============================================
-        // VALIDACIÓN Y ENVÍO DEL FORMULARIO
-        // ============================================
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+    function showToast(type, title, message) {
+        var container = document.getElementById('toastContainer');
+        var seconds = 5;
+        var icons = { success: '✓', danger: '✕', warning: '⚠', info: 'ℹ' };
 
-            var email = document.getElementById('email');
-            var password = document.getElementById('password');
-            var errorEmail = document.getElementById('errorEmail');
-            var errorPassword = document.getElementById('errorPassword');
+        var toast = document.createElement('div');
+        toast.className = 'toast toast-' + type;
+        toast.innerHTML =
+            '<span class="toast-icon">' + icons[type] + '</span>' +
+            '<div class="toast-content">' +
+                '<div class="toast-title">' + title + '</div>' +
+                '<p class="toast-message">' + message + '</p>' +
+            '</div>' +
+            '<button class="toast-close" onclick="this.parentElement.remove()">×</button>' +
+            '<span class="toast-timer">' + seconds + 's</span>';
 
-            // Limpiar errores previos
-            email.classList.remove('error');
-            password.classList.remove('error');
-            errorEmail.textContent = '';
-            errorPassword.textContent = '';
+        container.appendChild(toast);
 
-            var valido = true;
-
-            // Validar email
-            var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!email.value.trim()) {
-                email.classList.add('error');
-                errorEmail.textContent = '⚠ El correo es obligatorio.';
-                valido = false;
-            } else if (!emailRegex.test(email.value.trim())) {
-                email.classList.add('error');
-                errorEmail.textContent = '⚠ Formato de correo inválido.';
-                valido = false;
+        var timerEl = toast.querySelector('.toast-timer');
+        var interval = setInterval(function() {
+            seconds--;
+            timerEl.textContent = seconds + 's';
+            if (seconds <= 0) {
+                clearInterval(interval);
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(120%)';
+                setTimeout(function() { toast.remove(); }, 300);
             }
-
-            // Validar contraseña
-            if (!password.value.trim()) {
-                password.classList.add('error');
-                errorPassword.textContent = '⚠ La contraseña es obligatoria.';
-                valido = false;
-            } else if (password.value.length < 6) {
-                password.classList.add('error');
-                errorPassword.textContent = '⚠ Mínimo 6 caracteres.';
-                valido = false;
-            }
-
-            // Si hay errores, mostrar toast
-            if (!valido) {
-                showToast('danger', 'Error al procesar', 'Verifique los campos marcados en rojo.');
-                return;
-            }
-
-            // Simular login exitoso
-            showToast('success', '¡Bienvenido!', 'Iniciando sesión en Biotel Suites...');
-
-            // Redirigir después de 1.5 segundos
-            setTimeout(function() {
-                window.location.href = 'dashboard.html';
-            }, 1500);
-        });
-
-        // ============================================
-        // TOASTS
-        // ============================================
-        function showToast(type, title, message) {
-            var container = document.getElementById('toastContainer');
-            var seconds = 5;
-
-            var icons = {
-                success: '✓',
-                danger: '✕',
-                warning: '⚠',
-                info: 'ℹ'
-            };
-
-            var toast = document.createElement('div');
-            toast.className = 'toast toast-' + type;
-            toast.innerHTML = 
-                '<span class="toast-icon">' + icons[type] + '</span>' +
-                '<div class="toast-content">' +
-                    '<div class="toast-title">' + title + '</div>' +
-                    '<p class="toast-message">' + message + '</p>' +
-                '</div>' +
-                '<button class="toast-close" onclick="this.parentElement.remove()">×</button>' +
-                '<span class="toast-timer">' + seconds + 's</span>';
-
-            container.appendChild(toast);
-
-            var timerEl = toast.querySelector('.toast-timer');
-            var interval = setInterval(function() {
-                seconds--;
-                timerEl.textContent = seconds + 's';
-                if (seconds <= 0) {
-                    clearInterval(interval);
-                    toast.style.opacity = '0';
-                    toast.style.transform = 'translateX(120%)';
-                    setTimeout(function() { toast.remove(); }, 300);
-                }
-            }, 1000);
-        }
-
-        // ============================================
-        // LIMPIAR ERRORES AL ESCRIBIR
-        // ============================================
-        document.getElementById('email').addEventListener('input', function() {
-            this.classList.remove('error');
-            document.getElementById('errorEmail').textContent = '';
-        });
-
-        document.getElementById('password').addEventListener('input', function() {
-            this.classList.remove('error');
-            document.getElementById('errorPassword').textContent = '';
-        });
-    </script>
+        }, 1000);
+    }
+</script>
 
 </body>
 </html>
